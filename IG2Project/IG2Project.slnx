@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="IG2Project/IG2Project.vcxproj" Id="8f6aa58b-4a74-4ce1-b582-ab7ff9f47d66" />
+</Solution>
