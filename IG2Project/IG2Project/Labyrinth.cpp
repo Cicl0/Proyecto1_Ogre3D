@@ -22,17 +22,19 @@ Labyrinth::createLabyrinth(std::string stageFileName) {
 		iCol = 0;
 		while (iCol < numCols) {
 			stageFile >> cell;
+
+			Vector3 iniPos(Constant::BLOCK_SIZE * iCol, 0, Constant::BLOCK_SIZE * iRow);
+
 			// Inserta un bloque vacio (suelo)
 			if (cell == Constant::EMPTY_BLOCK) {
-				Vector3 iniPos(Constant::BLOCK_SIZE * iCol, 0, Constant::BLOCK_SIZE * iRow);
-				Empty* empty = new Empty(iniPos, nLabyrinthFloors, mSM); // En este caso en la constructora no asigna entidad
+				SceneNode* floorNode = nLabyrinthFloors->createChildSceneNode();
+				Empty* empty = new Empty(iniPos, floorNode, mSM); // En este caso en la constructora no asigna entidad
 			}
 			// Inserta un bloque lleno (muro)
 			else if (cell == Constant::WALL_BLOCK) {
-				Vector3 iniPos(Constant::BLOCK_SIZE * iCol, 0, Constant::BLOCK_SIZE * iRow);
-				Vector3 scale(Constant::BLOCK_SIZE);
-				Wall* wall = new Wall(iniPos, nLabyrinthWalls, mSM); // Internamente en la constructora se asigna la entidad al nodo
-				wall->setScale(scale);
+				SceneNode* wallNode = nLabyrinthWalls->createChildSceneNode();
+				std::cout << "Pos Muro: " << iniPos.x << ", " << iniPos.y << ", " << iniPos.z << std::endl;
+				Wall* wall = new Wall(iniPos, wallNode, mSM); // Internamente en la constructora se asigna la entidad al nodo
 			}
 			// Other type of block (por ahora vacio)
 			else {

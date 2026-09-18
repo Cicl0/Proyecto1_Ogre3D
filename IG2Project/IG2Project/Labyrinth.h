@@ -13,8 +13,6 @@ public:
 
 	Labyrinth(Ogre::SceneManager* sm, std::string fileName) :
 		mSM(sm),
-		nLabyrinthWalls(nullptr),
-		nLabyrinthFloors(nullptr),
 		numRows(0),
 		numCols(0)
 	{
@@ -23,11 +21,11 @@ public:
 		createLabyrinth(fileName);
 	}
 
-	void showBoundingBoxFloors() {
+	void showBoundingBoxWalls() {
 		nLabyrinthWalls->showBoundingBox(true);
 	}
 
-	void showBoundingBoxWalls() {
+	void showBoundingBoxFloors() {
 		nLabyrinthFloors->showBoundingBox(true);
 	}
 
