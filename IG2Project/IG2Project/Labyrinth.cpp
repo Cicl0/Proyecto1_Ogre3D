@@ -4,6 +4,7 @@
 
 #include "Wall.h"
 #include "Empty.h"
+#include "Hero.h"
 
 
 SceneNode*
@@ -25,21 +26,23 @@ Labyrinth::createLabyrinth(std::string stageFileName) {
 
 			Vector3 iniPos(Constant::BLOCK_SIZE * iCol, 0, Constant::BLOCK_SIZE * iRow);
 
-			// Inserta un bloque vacio (suelo)
-			if (cell == Constant::EMPTY_BLOCK) {
+	
+			if (cell == Constant::EMPTY_BLOCK) { // Inserta un bloque vacio (suelo)
 				SceneNode* floorNode = nLabyrinthFloors->createChildSceneNode();
 				Empty* empty = new Empty(iniPos, floorNode, mSM); // En este caso en la constructora no asigna entidad
 			}
-			// Inserta un bloque lleno (muro)
-			else if (cell == Constant::WALL_BLOCK) {
+			else if (cell == Constant::WALL_BLOCK) { // Inserta un bloque lleno (muro)
 				SceneNode* wallNode = nLabyrinthWalls->createChildSceneNode();
-				std::cout << "Pos Muro: " << iniPos.x << ", " << iniPos.y << ", " << iniPos.z << std::endl;
 				Wall* wall = new Wall(iniPos, wallNode, mSM); // Internamente en la constructora se asigna la entidad al nodo
 			}
-			// Other type of block (por ahora vacio)
-			else {
+			else if (cell == Constant::HERO_BLOCK){
+				Hero* hero = new Hero(iniPos, nHeroNode, mSM);
+				hero->setScale(Vector3(10));
+			}
+			else{ // Other type of block (por ahora vacio)
 
 			}
+
 			iCol++;
 		}
 		iRow++;

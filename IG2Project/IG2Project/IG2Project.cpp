@@ -157,7 +157,7 @@ void IG2Project::setupScene(void) {
      //-----------------------------------------------------------------------------
     // Create Labyrinth
 
-    std::string file = "Labyrinths/stage1.txt"; // Asignar a posteriori el nombre del archivo del laberinto
+    std::string file = "Labyrinths/stage3.txt"; // Asignar a posteriori el nombre del archivo del laberinto
 
     Labyrinth* labyrinth = new Labyrinth(mSM, file); // en la constructora se genera todo el laberinto a partir del "file"
 

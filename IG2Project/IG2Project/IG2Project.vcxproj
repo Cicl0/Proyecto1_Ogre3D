@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClInclude Include="Constant.h" />
     <ClInclude Include="Empty.h" />
+    <ClInclude Include="Hero.h" />
     <ClInclude Include="IG2Object.h" />
     <ClInclude Include="IG2Project.h" />
     <ClInclude Include="Labyrinth.h" />
@@ -28,6 +29,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Empty.cpp" />
+    <ClCompile Include="Hero.cpp" />
     <ClCompile Include="IG2Object.cpp" />
     <ClCompile Include="IG2Project.cpp" />
     <ClCompile Include="Labyrinth.cpp" />

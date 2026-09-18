@@ -18,6 +18,7 @@ public:
 	{
 		nLabyrinthWalls = mSM->getRootSceneNode()->createChildSceneNode("nLabyrinthWalls");
 		nLabyrinthFloors = mSM->getRootSceneNode()->createChildSceneNode("nLabyrinthFloors");
+		nHeroNode = mSM->getRootSceneNode()->createChildSceneNode("nHero");
 		createLabyrinth(fileName);
 	}
 
@@ -35,6 +36,7 @@ private:
 	Ogre::SceneManager* mSM;
 	Ogre::SceneNode* nLabyrinthWalls;
 	Ogre::SceneNode* nLabyrinthFloors;
+	Ogre::SceneNode* nHeroNode;
 
 	int numRows;
 	int numCols;
