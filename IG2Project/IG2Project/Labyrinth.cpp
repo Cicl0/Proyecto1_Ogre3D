@@ -36,8 +36,8 @@ Labyrinth::createLabyrinth(std::string stageFileName) {
 				Wall* wall = new Wall(iniPos, wallNode, mSM); // Internamente en la constructora se asigna la entidad al nodo
 			}
 			else if (cell == Constant::HERO_BLOCK){
-				Hero* hero = new Hero(iniPos, nHeroNode, mSM);
-				hero->setScale(Vector3(10));
+				mHero = new Hero(iniPos, nHeroNode, mSM);
+				mHero->setScale(Vector3(10));
 			}
 			else{ // Other type of block (por ahora vacio)
 

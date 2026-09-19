@@ -6,6 +6,7 @@
 
 #include "IG2Project.h"
 #include "Constant.h"
+#include "Hero.h"
 
 class Labyrinth
 {
@@ -30,6 +31,8 @@ public:
 		nLabyrinthFloors->showBoundingBox(true);
 	}
 
+	Hero* getHero() { return mHero; }
+
 private:
 	Ogre::SceneNode* createLabyrinth(std::string stageFilename);
 
@@ -37,6 +40,7 @@ private:
 	Ogre::SceneNode* nLabyrinthWalls;
 	Ogre::SceneNode* nLabyrinthFloors;
 	Ogre::SceneNode* nHeroNode;
+	Hero* mHero;
 
 	int numRows;
 	int numCols;

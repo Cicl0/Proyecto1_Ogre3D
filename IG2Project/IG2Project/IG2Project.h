@@ -19,6 +19,7 @@
 
 #include "Labyrinth.h"
 
+class Labyrinth;
 
 class IG2Project: public OgreBites::ApplicationContext, OgreBites::InputListener {
 
@@ -43,6 +44,8 @@ protected:
 
     Ogre::SceneNode* mCamNode = nullptr;
     OgreBites::CameraMan* mCamMgr = nullptr;
+
+    Labyrinth* labyrinth = nullptr;
 };
 
 #endif

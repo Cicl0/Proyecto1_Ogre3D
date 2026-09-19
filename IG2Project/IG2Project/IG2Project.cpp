@@ -1,6 +1,8 @@
 #include "IG2Project.h"
 #include "Constant.h"
 
+#include "Labyrinth.h"
+
 using namespace std;
 using namespace Ogre;
 
@@ -51,6 +53,12 @@ void IG2Project::setup(void) {
     mTrayMgr = new OgreBites::TrayManager("TrayGUISystem", getRenderWindow());
     mTrayMgr->showFrameStats(OgreBites::TL_BOTTOMLEFT);
     addInputListener(mTrayMgr);
+
+    std::string file = "Labyrinths/stage3.txt"; // Asignar a posteriori el nombre del archivo del laberinto
+
+    labyrinth = new Labyrinth(mSM, file); // en la constructora se genera todo el laberinto a partir del "file"
+
+    addInputListener(labyrinth->getHero());
 
     // Adds the listener for this object
     addInputListener(this);
@@ -157,10 +165,10 @@ void IG2Project::setupScene(void) {
      //-----------------------------------------------------------------------------
     // Create Labyrinth
 
-    std::string file = "Labyrinths/stage3.txt"; // Asignar a posteriori el nombre del archivo del laberinto
+    //std::string file = "Labyrinths/stage3.txt"; // Asignar a posteriori el nombre del archivo del laberinto
 
-    Labyrinth* labyrinth = new Labyrinth(mSM, file); // en la constructora se genera todo el laberinto a partir del "file"
+    //Labyrinth* labyrinth = new Labyrinth(mSM, file); // en la constructora se genera todo el laberinto a partir del "file"
 
-    labyrinth->showBoundingBoxWalls();
+    //labyrinth->showBoundingBoxWalls();
 }
 
