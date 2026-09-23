@@ -1,17 +1,17 @@
 #pragma once
 
-#include "IG2Object.h"
+#include "Character.h"
 #include "Constant.h"
 
 #include <OgreInput.h>
 
-class Hero : public IG2Object
+class Hero : public Character
 {
 public:
-	Hero(Vector3 iniPos, SceneNode* wallNode, SceneManager* sceneManager) :
-		IG2Object(iniPos, wallNode, sceneManager, "Sinbad.mesh")
+	Hero(Vector3 iniPos, SceneNode* heroNode, SceneManager* sceneManager) :
+		Character(iniPos, heroNode, sceneManager, "Sinbad.mesh")
 	{ }
 
-	virtual bool keyPressed(const OgreBites::KeyboardEvent& evt) override;
+	virtual bool keyPressed(const OgreBites::KeyboardEvent& evt);
 };
 

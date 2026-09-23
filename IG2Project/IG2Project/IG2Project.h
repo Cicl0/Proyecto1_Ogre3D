@@ -18,8 +18,10 @@
 #include <SDL_keycode.h>
 
 #include "Labyrinth.h"
+#include "LabyrinthManager.h"
 
 class Labyrinth;
+class LabyrinthManager;
 
 class IG2Project: public OgreBites::ApplicationContext, OgreBites::InputListener {
 
@@ -46,6 +48,7 @@ protected:
     OgreBites::CameraMan* mCamMgr = nullptr;
 
     Labyrinth* labyrinth = nullptr;
+    LabyrinthManager* mLM = nullptr;
 };
 
 #endif

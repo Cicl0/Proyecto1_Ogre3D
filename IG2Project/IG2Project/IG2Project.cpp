@@ -54,11 +54,13 @@ void IG2Project::setup(void) {
     mTrayMgr->showFrameStats(OgreBites::TL_BOTTOMLEFT);
     addInputListener(mTrayMgr);
 
-    std::string file = "Labyrinths/stage3.txt"; // Asignar a posteriori el nombre del archivo del laberinto
+    mLM = new LabyrinthManager(mSM, this);
 
-    labyrinth = new Labyrinth(mSM, file); // en la constructora se genera todo el laberinto a partir del "file"
+    //std::string file = "Labyrinths/stage3.txt"; // Asignar a posteriori el nombre del archivo del laberinto
 
-    addInputListener(labyrinth->getHero());
+    //labyrinth = new Labyrinth(mSM, file); // en la constructora se genera todo el laberinto a partir del "file"
+
+    //addInputListener(labyrinth->getHero());
 
     // Adds the listener for this object
     addInputListener(this);

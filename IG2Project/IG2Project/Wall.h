@@ -1,11 +1,16 @@
 #pragma once
+
 #include "IG2Object.h"
-class Wall : public IG2Object
+#include "Block.h"
+
+class Wall : public Block
 {
 public:
-	Wall(Vector3 iniPos, SceneNode* wallNode, SceneManager* sceneManager) :
-		IG2Object(iniPos, wallNode, sceneManager, "cube.mesh")
-	{ }
+	Wall(Vector3 iniPos, SceneNode* wallNode, SceneManager* sceneManager, string mesh = "cube.mesh") :
+		Block(iniPos, wallNode, sceneManager, mesh)
+	{
+		collision = true;
+	}
 
 	void setScale(Vector3 scale) { IG2Object::setScale(scale); }
 };

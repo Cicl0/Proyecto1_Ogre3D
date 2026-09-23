@@ -7,6 +7,7 @@
 #include "IG2Project.h"
 #include "Constant.h"
 #include "Hero.h"
+#include "Block.h"
 
 class Labyrinth
 {
@@ -33,6 +34,14 @@ public:
 
 	Hero* getHero() { return mHero; }
 
+	Block* getBlock(Ogre::Vector3 pos);
+
+	bool blockCenterReached(Ogre::Vector3 difference, Ogre::Vector3 dir);
+
+	void stepForward(Character* character, float speed, Real time);
+
+	void moveCharacter(Character* character, Real time);
+
 private:
 	Ogre::SceneNode* createLabyrinth(std::string stageFilename);
 
@@ -41,6 +50,8 @@ private:
 	Ogre::SceneNode* nLabyrinthFloors;
 	Ogre::SceneNode* nHeroNode;
 	Hero* mHero;
+
+	vector<vector<Block*>> mapa;
 
 	int numRows;
 	int numCols;
