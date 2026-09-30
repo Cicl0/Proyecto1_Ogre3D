@@ -2,13 +2,6 @@
 
 #include "IG2Object.h"
 
-enum Direction {
-	UP = 0,
-	DOWN = 1,
-	LEFT = 2,
-	RIGHT = 3,
-	NONE = 4
-};
 
 class Character : public IG2Object
 {
@@ -22,20 +15,22 @@ public:
 
 	virtual bool keyPressed(const OgreBites::KeyboardEvent& evt) override = 0;
 
-	Vector3 getVector(Direction dir);
+	Vector3 getDirection() { return dir; }
 
-	Vector3 getNexDirVector() { return getVector(nextDir); }
+	Vector3 getNexDirVector() { return nextDir; }
 
-	bool isDirectionModified() { return nextDir != NONE; }
+	bool isDirectionModified() { return nextDir == Vector3::ZERO ? false : nextDir != dir; }
+
+	bool isStill() { return nextDir == Vector3::ZERO; }
 
 	void rotateToNewDirection();
 
 	bool is180Turn();
 
 protected:
-	Direction dir = NONE;
-	Direction nextDir = NONE;
+	Vector3 dir = Vector3::ZERO;
+	Vector3 nextDir = Vector3::ZERO;
 
-	float speed = 1;
+	float speed = 100;
 };
 

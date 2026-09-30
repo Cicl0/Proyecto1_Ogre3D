@@ -135,14 +135,14 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>C:\Users\Alejandro\Desktop\Infierno 2.0\IG2\ogre-14.3.4-release\sdk\include\OGRE;C:\Users\Alejandro\Desktop\Infierno 2.0\IG2\ogre-14.3.4-release\sdk\include\OGRE\Bites;C:\Users\Alejandro\Desktop\Infierno 2.0\IG2\ogre-14.3.4-release\sdk\include\OGRE\Overlay;C:\Users\Alejandro\Desktop\Infierno 2.0\IG2\ogre-14.3.4-release\sdk\include\OGRE\RTShaderSystem;C:\Users\Alejandro\Desktop\Infierno 2.0\IG2\ogre-14.3.4-release\Dependencies\include\SDL2</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Alejandro\Desktop\Infierno 2.0\IG2\ogre14.3.4-debug\sdk\include\OGRE;C:\Users\Alejandro\Desktop\Infierno 2.0\IG2\ogre14.3.4-debug\sdk\include\OGRE\Bites;C:\Users\Alejandro\Desktop\Infierno 2.0\IG2\ogre14.3.4-debug\sdk\include\OGRE\Overlay;C:\Users\Alejandro\Desktop\Infierno 2.0\IG2\ogre14.3.4-debug\sdk\include\OGRE\RTShaderSystem;C:\Users\Alejandro\Desktop\Infierno 2.0\IG2\ogre14.3.4-debug\Dependencies\include\SDL2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4996</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\Alejandro\Desktop\Infierno 2.0\IG2\ogre-14.3.4-release\lib\Release</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OgreMain.lib;OgreBites.lib;OgreOverlay.lib;OgreRTShaderSystem.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\Alejandro\Desktop\Infierno 2.0\IG2\ogre14.3.4-debug\lib\Debug</AdditionalLibraryDirectories>
+      <AdditionalDependencies>OgreMain_d.lib;OgreBites_d.lib;OgreOverlay_d.lib;OgreRTShaderSystem_d.lib</AdditionalDependencies>
     </Link>
     <Manifest>
       <EnableSegmentHeap>true</EnableSegmentHeap>

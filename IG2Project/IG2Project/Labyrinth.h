@@ -34,16 +34,16 @@ public:
 
 	Hero* getHero() { return mHero; }
 
-	Block* getBlock(Ogre::Vector3 pos);
+	Block*& getBlock(Ogre::Vector3 pos);
 
 	bool blockCenterReached(Ogre::Vector3 difference, Ogre::Vector3 dir);
 
-	void stepForward(Character* character, float speed, Real time);
+	void stepForward(Character* character, float speed, Real time, Block* nextBlock);
 
 	void moveCharacter(Character* character, Real time);
 
 private:
-	Ogre::SceneNode* createLabyrinth(std::string stageFilename);
+	void createLabyrinth(std::string stageFilename);
 
 	Ogre::SceneManager* mSM;
 	Ogre::SceneNode* nLabyrinthWalls;

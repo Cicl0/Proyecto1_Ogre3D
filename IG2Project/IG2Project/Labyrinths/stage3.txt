@@ -1,12 +1,12 @@
 18
 26
 xxxxxxxxxxxxxxxxxxxxxxxxxx
-xoooooxxxxxoooooxxxxooooox
+xhooooxxxxxoooooxxxxooooox
 xoxxxoooooooxxxooooooxxxox
 xoooooxoxoxoxxxoxxoxooooox
 xoxxxoxoxoxooooooooxoxxxox
 xoxxxoxoxoxoxxxxxoxxoxxoox
-xooooooooooooooooooohoooxx
+xoooooooooooooooooooooooxx
 xoxxxxoxxoxxxxxxxoxxxoxoxx
 xoooooooooooooooooooooooox
 xoxoxoxxoxoxxxxxxoxoxoxxxx

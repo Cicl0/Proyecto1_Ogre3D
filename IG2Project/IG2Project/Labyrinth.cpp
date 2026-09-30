@@ -1,13 +1,15 @@
 #include "Labyrinth.h"
 
 #include <iostream>
+#include <cmath>
+#include <algorithm>
 
 #include "Wall.h"
 #include "Empty.h"
 #include "Hero.h"
 
 
-SceneNode*
+void
 Labyrinth::createLabyrinth(std::string stageFileName) {
 	std::ifstream stageFile;
 	stageFile.open(stageFileName);
@@ -55,23 +57,21 @@ Labyrinth::createLabyrinth(std::string stageFileName) {
 		}
 		iRow++;
 	}
+
 	stageFile.close();
 
 	mapa = move(matrix);
 }
 
-Block*
+Block*&
 Labyrinth::getBlock(Ogre::Vector3 pos) {
-	// 1. Obtener la columna (eje X) y la fila (eje Z) dividiendo directamente
-	int col = pos.x / Constant::BLOCK_SIZE;
-	if (fmod(pos.x, Constant::BLOCK_SIZE) > Constant::BLOCK_SIZE / 2) col++;
-	int row = pos.z / Constant::BLOCK_SIZE;
-	if (fmod(pos.z, Constant::BLOCK_SIZE) > Constant::BLOCK_SIZE / 2) row++;
+	float halfSize = Constant::BLOCK_SIZE / 2.0f;
 
-	// Control de bordes del mapa
-	if (row < 0 || row >= numRows || col < 0 || col >= numCols) {
-		return nullptr;
-	}
+	float posX = pos.x;
+	float posZ = pos.z;
+
+	int col = floor((pos.x + halfSize) / Constant::BLOCK_SIZE);
+	int row = floor((pos.z + halfSize) / Constant::BLOCK_SIZE);
 
 	return mapa[row][col];
 }
@@ -81,43 +81,102 @@ Labyrinth::blockCenterReached(Ogre::Vector3 difference, Ogre::Vector3 dir) {
 	return difference.dotProduct(dir) >= 0.0f;
 }
 
-void
-Labyrinth::stepForward(Character* character, float speed, Real time) { // Podria hacerse por setPosition() pero he preferido translate
-	Ogre::Vector3 displacement = character->getGridOrientation() * speed * time;
-	character->move(displacement);
+void 
+Labyrinth::stepForward(Character* character, float speed, Real time, Block* nextBlock) {
+	if (character->isStill())
+		return;
+
+	Vector3 currentPos = character->getPosition();
+	Vector3 dir = character->getGridOrientation();
+	float halfSize = Constant::BLOCK_SIZE / 2.0f;
+
+	// Calcular en qué celda está actualmente
+	int col = floor((currentPos.x + halfSize) / Constant::BLOCK_SIZE);
+	int row = floor((currentPos.z + halfSize) / Constant::BLOCK_SIZE);
+
+	// El centro del bloque [row][col] está EXACTAMENTE en estas coordenadas:
+	Vector3 blockCenter(
+		col * Constant::BLOCK_SIZE,
+		currentPos.y,
+		row * Constant::BLOCK_SIZE
+	);
+
+	// Siguiente posición si se moviera
+	Vector3 charNewPos = currentPos + (dir * speed * time);
+	Vector3 difference = charNewPos - blockCenter;
+
+	// Si enfrente hay una pared/bloque no traspasable Y con este movimiento al menos se alcanza el centro:
+	if (!nextBlock->canPassThrough() && blockCenterReached(difference, dir)) {
+		// Se coloca exactamente en el centro del bloque actual y no se mueve más
+		character->setPosition(blockCenter);
+		return;
+	}
+
+	// Si el camino está libre o aún no ha llegado al centro, avanza libremente
+	character->move(dir * speed * time);
+	cout << "Char posx: " << character->getPosition().x << ", posz: " << character->getPosition().z << endl;
 }
 
 void
 Labyrinth::moveCharacter(Character* character, Real time) {
-	Block* charBlock, * inFrontBlock;
+	Vector3 charPos = character->getPosition();
+	float halfSize = Constant::BLOCK_SIZE / 2.0f;
 
-	// Get the block where the character is placed, and the next one
-	charBlock = this->getBlock(character->getPosition());
-	inFrontBlock = this->getBlock((character->getGridOrientation() * Constant::BLOCK_SIZE) + character->getPosition());
+	// 1. Obtener la celda actual en la matriz
+	// X -> Columnas, Z -> Filas
+	int currentCol = floor((charPos.x + halfSize) / Constant::BLOCK_SIZE);
+	int currentRow = floor((charPos.z + halfSize) / Constant::BLOCK_SIZE);
 
-	// Character does not change its direction -> step forward!
-	if (!character->isDirectionModified())
-		stepForward(character, character->getSpeed(), time);
+	currentCol = max(0, min(currentCol, numCols - 1));
+	currentRow = max(0, min(currentRow, numRows - 1));
 
-	// New direction
+	Block* charBlock = mapa[currentRow][currentCol];
+
+	// 2. Obtener el bloque de ENFRENTE según la dirección actual
+	Vector3 gridDir = character->getGridOrientation();
+
+	int frontCol = currentCol + gridDir.x;
+	int frontRow = currentRow + gridDir.z;
+
+	Block* inFrontBlock = mapa[frontRow][frontCol];
+
+	// Centro exacto del bloque actual en coordenadas 3D
+	Vector3 blockCenter(
+		currentCol * Constant::BLOCK_SIZE,
+		charPos.y,
+		currentRow * Constant::BLOCK_SIZE
+	);
+
+	if (!character->isDirectionModified()) {
+		stepForward(character, character->getSpeed(), time, inFrontBlock);
+	}
 	else {
-		// Check the block in front of the character for the new direction
-		Block* newDirBlock = this->getBlock(character->getPosition() + (character->getNexDirVector() * Constant::BLOCK_SIZE));
+		// Obtener el bloque de la nueva dirección deseada (nextDir)
+		Vector3 nextDir = character->getNexDirVector();
 
-		// New position of the character after moving... (for checking if the center of the block is reached)
-		Vector3 charNewPos = character->getPosition() + (character->getGridOrientation() * character->getSpeed() * time);
-		Vector3 difference = Vector3(charNewPos.x - charBlock->getPosition().x, 0, charNewPos.z - charBlock->getPosition().z);
+		int newCol = currentCol + nextDir.x;
+		int newRow = currentRow + nextDir.z;
 
-		// Check if the character can rotate for a new VALID direction
-		if (newDirBlock->canPassThrough() && blockCenterReached(difference, character->getGridOrientation()))
+		Block* newDirBlock = mapa[newRow][newCol];
+
+		// calcula la diferencia entre la nueva posicion y el centro del bloque actual
+		Vector3 charNewPos = charPos + (gridDir * character->getSpeed() * time);
+		Vector3 difference = charNewPos - blockCenter;
+
+		// Situaciones potenciales:
+		// Giro de 180°
+		if (character->is180Turn()) {
 			character->rotateToNewDirection();
-
-		// 180 turn?
-		else if (character->is180Turn())
+			stepForward(character, character->getSpeed(), time, inFrontBlock);
+		}
+		// Giro válido a 90°
+		else if (newDirBlock->canPassThrough() && blockCenterReached(difference, gridDir)) {
+			character->setPosition(blockCenter); // Clavar en el centro exacto antes de rotar, para evitar solapamientos entre las paredes
 			character->rotateToNewDirection();
-
-		// Rotation cannot be performed... check if character can step forward
-		else
-			stepForward(character, character->getSpeed(), time);
+		}
+		// No se puede girar (es un muro o no ha llegado al centro)
+		else {
+			stepForward(character, character->getSpeed(), time, inFrontBlock);
+		}
 	}
 }
