@@ -15,9 +15,19 @@ public:
 	{
 	}
 
-	bool canPassThrough() { return !collision; }
+	void frameRendered(const Ogre::FrameEvent& evt) override {}
+
+	bool canPassThrough() const { return !collision; }
+
+	bool isVisible() const { return visibility; }
+
+	bool isBreakable() const { return breakable; }
+
+	void breakBlock() { if (breakable) collision = false; visibility = false; }
 
 protected:
 	bool collision;
+	bool visibility;
+	bool breakable;
 };
 

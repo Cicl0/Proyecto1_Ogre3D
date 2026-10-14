@@ -10,7 +10,11 @@ public:
 		Block(iniPos, wallNode, sceneManager, mesh)
 	{
 		collision = true;
+		breakable = false;
+		visibility = true;
 	}
+
+	void frameRendered(const Ogre::FrameEvent& evt) override { }
 
 	void setScale(Vector3 scale) { IG2Object::setScale(scale); }
 };

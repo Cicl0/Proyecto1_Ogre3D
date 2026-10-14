@@ -13,12 +13,15 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Archivos de encabezado\Blocks">
+      <UniqueIdentifier>{f9bb3ed0-c2a2-40b8-97f2-741c72ad4b54}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de origen\Blocks">
+      <UniqueIdentifier>{016aab8f-eb46-4d77-b92d-fc622a25fe2d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Constant.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
-    <ClInclude Include="Empty.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
     <ClInclude Include="IG2Object.h">
@@ -30,26 +33,35 @@
     <ClInclude Include="Labyrinth.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="Wall.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
     <ClInclude Include="Hero.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
     <ClInclude Include="Character.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="Block.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
     <ClInclude Include="LabyrinthManager.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
+    <ClInclude Include="Block.h">
+      <Filter>Archivos de encabezado\Blocks</Filter>
+    </ClInclude>
+    <ClInclude Include="Wall.h">
+      <Filter>Archivos de encabezado\Blocks</Filter>
+    </ClInclude>
+    <ClInclude Include="Empty.h">
+      <Filter>Archivos de encabezado\Blocks</Filter>
+    </ClInclude>
+    <ClInclude Include="FakeBlock.h">
+      <Filter>Archivos de encabezado\Blocks</Filter>
+    </ClInclude>
+    <ClInclude Include="InvisibleBlock.h">
+      <Filter>Archivos de encabezado\Blocks</Filter>
+    </ClInclude>
+    <ClInclude Include="BreakableBlock.h">
+      <Filter>Archivos de encabezado\Blocks</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Empty.cpp">
-      <Filter>Archivos de origen</Filter>
-    </ClCompile>
     <ClCompile Include="IG2Object.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
@@ -62,20 +74,32 @@
     <ClCompile Include="Main.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="Wall.cpp">
-      <Filter>Archivos de origen</Filter>
-    </ClCompile>
     <ClCompile Include="Hero.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="Character.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="Block.cpp">
-      <Filter>Archivos de origen</Filter>
-    </ClCompile>
     <ClCompile Include="LabyrinthManager.cpp">
       <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="Block.cpp">
+      <Filter>Archivos de origen\Blocks</Filter>
+    </ClCompile>
+    <ClCompile Include="Wall.cpp">
+      <Filter>Archivos de origen\Blocks</Filter>
+    </ClCompile>
+    <ClCompile Include="Empty.cpp">
+      <Filter>Archivos de origen\Blocks</Filter>
+    </ClCompile>
+    <ClCompile Include="BreakableBlock.cpp">
+      <Filter>Archivos de origen\Blocks</Filter>
+    </ClCompile>
+    <ClCompile Include="FakeBlock.cpp">
+      <Filter>Archivos de origen\Blocks</Filter>
+    </ClCompile>
+    <ClCompile Include="InvisibleBlock.cpp">
+      <Filter>Archivos de origen\Blocks</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

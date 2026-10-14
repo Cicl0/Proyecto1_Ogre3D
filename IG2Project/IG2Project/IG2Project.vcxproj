@@ -20,23 +20,29 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Block.h" />
+    <ClInclude Include="BreakableBlock.h" />
     <ClInclude Include="Character.h" />
     <ClInclude Include="Constant.h" />
     <ClInclude Include="Empty.h" />
+    <ClInclude Include="FakeBlock.h" />
     <ClInclude Include="Hero.h" />
     <ClInclude Include="IG2Object.h" />
     <ClInclude Include="IG2Project.h" />
+    <ClInclude Include="InvisibleBlock.h" />
     <ClInclude Include="Labyrinth.h" />
     <ClInclude Include="LabyrinthManager.h" />
     <ClInclude Include="Wall.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Block.cpp" />
+    <ClCompile Include="BreakableBlock.cpp" />
     <ClCompile Include="Character.cpp" />
     <ClCompile Include="Empty.cpp" />
+    <ClCompile Include="FakeBlock.cpp" />
     <ClCompile Include="Hero.cpp" />
     <ClCompile Include="IG2Object.cpp" />
     <ClCompile Include="IG2Project.cpp" />
+    <ClCompile Include="InvisibleBlock.cpp" />
     <ClCompile Include="Labyrinth.cpp" />
     <ClCompile Include="LabyrinthManager.cpp" />
     <ClCompile Include="Main.cpp" />
