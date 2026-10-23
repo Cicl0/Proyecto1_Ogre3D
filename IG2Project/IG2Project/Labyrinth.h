@@ -58,10 +58,12 @@ private:
 	void stepForward(Character* character, float speed, Real time, Block* nextBlock);
 
 	Ogre::SceneManager* mSM;
+
 	Ogre::SceneNode* nLabyrinthWalls;
 	Ogre::SceneNode* nLabyrinthFloors;
 	Ogre::SceneNode* nHeroNode;
 	Ogre::SceneNode* nVillainNode;
+
 	Hero* mHero;
 	Villain* mVillain;
 
@@ -69,6 +71,9 @@ private:
 
 	int numRows;
 	int numCols;
+
+	string wallMaterial = "examples/Wall";
+	string floorMaterial = "examples/Grass";
 
 	int points = 0;
 };

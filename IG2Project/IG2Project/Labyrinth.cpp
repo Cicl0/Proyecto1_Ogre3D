@@ -36,7 +36,7 @@ Labyrinth::createLabyrinth(std::string stageFileName) {
 		Vector3::UNIT_Z);      // dirección "arriba" de la textura
 
 	Entity* suelo = mSM->createEntity("LabyrinthFloorMesh");
-	suelo->setMaterialName("examples/Grass");
+	suelo->setMaterialName(floorMaterial);
 	suelo->setCastShadows(false);
 
 	SceneNode* nSuelo = mSM->getRootSceneNode()->createChildSceneNode();
@@ -66,7 +66,7 @@ Labyrinth::createLabyrinth(std::string stageFileName) {
 			else if (cell == Constant::WALL_BLOCK) { // Inserta un bloque lleno (muro)
 				SceneNode* wallNode = nLabyrinthWalls->createChildSceneNode();
 				Wall* wall = new Wall(iniPos, wallNode, mSM); // Internamente en la constructora se asigna la entidad al nodo
-				wall->setMaterialName("examples/Wall");
+				wall->setMaterialName(wallMaterial);
 				matrix[iRow][iCol] = wall;
 			}
 			else if (cell == Constant::HERO_BLOCK){
