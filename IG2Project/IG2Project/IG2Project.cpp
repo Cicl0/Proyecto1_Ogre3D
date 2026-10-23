@@ -54,13 +54,8 @@ void IG2Project::setup(void) {
     mTrayMgr->showFrameStats(OgreBites::TL_BOTTOMLEFT);
     addInputListener(mTrayMgr);
 
-    mLM = new LabyrinthManager(mSM, this);
-
-    //std::string file = "Labyrinths/stage3.txt"; // Asignar a posteriori el nombre del archivo del laberinto
-
-    //labyrinth = new Labyrinth(mSM, file); // en la constructora se genera todo el laberinto a partir del "file"
-
-    //addInputListener(labyrinth->getHero());
+    // Laberinto
+    mLM = new LabyrinthManager(mSM, this, mTrayMgr);
 
     // Adds the listener for this object
     addInputListener(this);
@@ -104,73 +99,5 @@ void IG2Project::setupScene(void) {
     mLightNode = mSM->getRootSceneNode()->createChildSceneNode("nLuz");
     mLightNode->attachObject(luz);
     mLightNode->setDirection(Ogre::Vector3(-1, -1, -1));
- 
-
-    //------------------------------------------------------------------------
-    // Creating Sinbad
-
-    //Ogre::Entity* ent = mSM->createEntity("Sinbad.mesh");
-    //mSinbadNode = mSM->getRootSceneNode()->createChildSceneNode("nSinbad");
-    //mSinbadNode->attachObject(ent);
-
-    // Show bounding box
-    //mSinbadNode->showBoundingBox(true);
-
-    // Set position of Sinbad
-    //mSinbadNode->setPosition(x, y, z);
-
-    // Set scale of Sinbad
-    //mSinbadNode->setScale(20, 20, 20);
-
-    //mSinbadNode->yaw(Ogre::Degree(-45));
-    //mSinbadNode->setVisible(false);    
-
-
-    //------------------------------------------------------------------------
-    // Creating the floor
-
-    //MeshManager::getSingleton().createPlane("floor", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-    //    Plane(Vector3::UNIT_Y, 0),
-    //    1500, 1500, 50, 50, true, 1, 5, 5,
-    //    Vector3::UNIT_Z);
-
-    //Entity* entFloor = mSM->createEntity("exampleFloor", "floor");
-    //entFloor->setMaterialName("example/stonesFloor");
-    //SceneNode* floorNode = mSM->getRootSceneNode()->createChildSceneNode();
-    //floorNode->attachObject(entFloor);
-
-
-    //------------------------------------------------------------------------
-   // Creating the dragon
-
-    //Ogre::Entity* entDragon = mSM->createEntity("dragon.mesh");
-    //Ogre::SceneNode* mDragonNode = mSM->getRootSceneNode()->createChildSceneNode("nDragon");
-    //mDragonNode->attachObject(entDragon);
-
-    // Show bounding box
-    //mDragonNode->showBoundingBox(true);
-    //mDragonNode->yaw(Ogre::Degree(-45));
-    //mDragonNode->setVisible(false);
-
-    //Ogre::Entity* entCube = mSM->createEntity("cube.mesh");
-    //Ogre::SceneNode* mCubeNode = mSM->getRootSceneNode()->createChildSceneNode("nCube");
-    //mCubeNode->attachObject(entCube);
-
-
-    // Set position of the dragon
-    //mDragonNode->setPosition(x, y, z);
-
-    // Set scale of the dragon
-    //mCubeNode->setScale(Constant::BLOCK_SIZE, Constant::BLOCK_SIZE, Constant::BLOCK_SIZE);
-    //mCubeNode->showBoundingBox(true);
-
-     //-----------------------------------------------------------------------------
-    // Create Labyrinth
-
-    //std::string file = "Labyrinths/stage3.txt"; // Asignar a posteriori el nombre del archivo del laberinto
-
-    //Labyrinth* labyrinth = new Labyrinth(mSM, file); // en la constructora se genera todo el laberinto a partir del "file"
-
-    //labyrinth->showBoundingBoxWalls();
 }
 

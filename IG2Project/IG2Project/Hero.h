@@ -13,5 +13,18 @@ public:
 	{ }
 
 	virtual bool keyPressed(const OgreBites::KeyboardEvent& evt);
+
+	Vector3& InitialPosition() {
+		return iniPos;
+	}
+
+	int& Lives() {
+		return lives;
+	}
+
+private:
+	Vector3 iniPos;
+
+	int lives = 3;
 };
 

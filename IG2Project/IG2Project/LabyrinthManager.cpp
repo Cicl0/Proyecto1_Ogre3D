@@ -2,9 +2,25 @@
 
 void
 LabyrinthManager::setup() {
-	std::string file = "Labyrinths/stage3.txt"; // Asignar a posteriori el nombre del archivo del laberinto
 
-	laby = new Labyrinth(mSM, file); // en la constructora se genera todo el laberinto a partir del "file"
+	stages = {
+		"Labyrinths/stage1.txt",
+		"Labyrinths/stage2.txt",
+		"Labyrinths/stage3.txt"
+	};
+
+	currentStage = 2;
+
+	// Información del juego (primero la etiqueta, luego el cuadro de texto)
+	infoLabel = mTrayMgr->createLabel(
+		OgreBites::TL_BOTTOMRIGHT, "infoLabel", "Stage: ", 200);
+	infoText = mTrayMgr->createTextBox(
+		OgreBites::TL_BOTTOMRIGHT, "infoText", "Game Info:", 200, 100);
+
+
+	laby = new Labyrinth(mSM, stages[currentStage]); // en la constructora se genera todo el laberinto a partir del "file"
+
+	mHero = laby->getHero();
 
 	if (mAppCtx && laby && laby->getHero() && laby->getVillain()) {
 		mAppCtx->addInputListener(this);
@@ -21,4 +37,15 @@ LabyrinthManager::frameRendered(const Ogre::FrameEvent& evt) {
 	if (laby->getVillain()) {
 		laby->moveVillain(laby->getVillain(), evt.timeSinceLastFrame);
 	}
+	updateInfo();
+}
+
+void LabyrinthManager::updateInfo() {
+	std::stringstream ss;
+	ss << "Vidas: " << mHero->Lives() << "\n"
+		<< "Puntos: " << laby->Points() << "\n";
+	infoText->setText(ss.str());
+	ss.str("");
+	ss << "Stage: " << currentStage + 1;
+	infoLabel->setCaption(ss.str());
 }

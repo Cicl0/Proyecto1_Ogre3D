@@ -73,6 +73,8 @@ Labyrinth::createLabyrinth(std::string stageFileName) {
 				mHero = new Hero(iniPos, nHeroNode, mSM);
 				mHero->setScale(Vector3(Constant::BLOCK_SIZE / 10.0f));
 
+				mHero->InitialPosition() = iniPos;
+
 				SceneNode* floorNode = nLabyrinthFloors->createChildSceneNode();
 				Empty* empty = new Empty(iniPos, floorNode, mSM);
 				matrix[iRow][iCol] = empty;

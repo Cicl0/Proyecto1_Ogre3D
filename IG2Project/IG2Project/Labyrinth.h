@@ -42,11 +42,7 @@ public:
 
 	Block*& getBlock(Ogre::Vector3 pos);
 
-	bool blockCenterReached(Ogre::Vector3 difference, Ogre::Vector3 dir);
-
-	bool canMoveTo(int row, int col);
-
-	void stepForward(Character* character, float speed, Real time, Block* nextBlock);
+	int& Points() { return points; }
 
 	void moveCharacter(Character* character, Real time);
 
@@ -54,6 +50,12 @@ public:
 
 private:
 	void createLabyrinth(std::string stageFilename);
+
+	bool blockCenterReached(Ogre::Vector3 difference, Ogre::Vector3 dir);
+
+	bool canMoveTo(int row, int col);
+
+	void stepForward(Character* character, float speed, Real time, Block* nextBlock);
 
 	Ogre::SceneManager* mSM;
 	Ogre::SceneNode* nLabyrinthWalls;
@@ -67,5 +69,7 @@ private:
 
 	int numRows;
 	int numCols;
+
+	int points = 0;
 };
 
