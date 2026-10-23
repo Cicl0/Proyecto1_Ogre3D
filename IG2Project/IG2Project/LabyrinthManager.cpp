@@ -6,9 +6,10 @@ LabyrinthManager::setup() {
 
 	laby = new Labyrinth(mSM, file); // en la constructora se genera todo el laberinto a partir del "file"
 
-	if (mAppCtx && laby && laby->getHero()) {
+	if (mAppCtx && laby && laby->getHero() && laby->getVillain()) {
 		mAppCtx->addInputListener(this);
 		mAppCtx->addInputListener(laby->getHero());
+		mAppCtx->addInputListener(laby->getVillain());
 	}
 }
 

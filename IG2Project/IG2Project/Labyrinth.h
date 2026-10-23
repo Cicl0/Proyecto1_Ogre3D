@@ -7,7 +7,10 @@
 #include "IG2Project.h"
 #include "Constant.h"
 #include "Hero.h"
+#include "Villain.h"
 #include "Block.h"
+#include "Wall.h"
+#include "Empty.h"
 
 class Labyrinth
 {
@@ -21,6 +24,7 @@ public:
 		nLabyrinthWalls = mSM->getRootSceneNode()->createChildSceneNode("nLabyrinthWalls");
 		nLabyrinthFloors = mSM->getRootSceneNode()->createChildSceneNode("nLabyrinthFloors");
 		nHeroNode = mSM->getRootSceneNode()->createChildSceneNode("nHero");
+		nVillainNode = mSM->getRootSceneNode()->createChildSceneNode("nVillain");
 		createLabyrinth(fileName);
 	}
 
@@ -33,6 +37,8 @@ public:
 	}
 
 	Hero* getHero() { return mHero; }
+
+	Villain* getVillain() { return mVillain; }
 
 	Block*& getBlock(Ogre::Vector3 pos);
 
@@ -49,7 +55,9 @@ private:
 	Ogre::SceneNode* nLabyrinthWalls;
 	Ogre::SceneNode* nLabyrinthFloors;
 	Ogre::SceneNode* nHeroNode;
+	Ogre::SceneNode* nVillainNode;
 	Hero* mHero;
+	Villain* mVillain;
 
 	vector<vector<Block*>> mapa;
 

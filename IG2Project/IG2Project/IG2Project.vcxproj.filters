@@ -60,6 +60,9 @@
     <ClInclude Include="BreakableBlock.h">
       <Filter>Archivos de encabezado\Blocks</Filter>
     </ClInclude>
+    <ClInclude Include="Villain.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IG2Object.cpp">
@@ -100,6 +103,9 @@
     </ClCompile>
     <ClCompile Include="InvisibleBlock.cpp">
       <Filter>Archivos de origen\Blocks</Filter>
+    </ClCompile>
+    <ClCompile Include="Villain.cpp">
+      <Filter>Archivos de origen</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

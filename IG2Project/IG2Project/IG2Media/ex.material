@@ -1,0 +1,92 @@
+material example/stonesFloor{
+    technique { 
+	pass {  
+	    texture_unit {
+		texture BeachStones.jpg
+	    }
+	}
+    }
+}
+
+material examples/Rockwall
+{
+	technique
+	{
+		pass
+		{
+			texture_unit
+			{
+				texture rockwall.tga
+			}
+		}
+	}
+}
+
+material examples/EnvMappedRustySteel
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture RustySteel.jpg
+			}
+
+			texture_unit
+			{
+				texture spheremap.png
+				colour_op_ex add src_texture src_current
+				colour_op_multipass_fallback one one
+				env_map spherical
+			}
+		}
+	}
+}
+
+material examples/BumpyMetal
+{
+	technique
+	{
+		pass
+		{
+			ambient 0.75 0.75 0.75
+
+			texture_unit
+			{
+				texture BumpyMetal.jpg
+			}
+		}
+	}
+}
+
+material examples/Grass
+{
+	technique
+	{
+		pass
+		{
+			texture_unit
+			{
+				texture grass.png
+			}
+		}
+	}
+}
+
+material examples/Wall
+{
+	technique
+	{
+		pass
+		{
+			texture_unit
+			{
+				texture egyptrockyfull.jpg
+			}
+		}
+	}
+}
+
+

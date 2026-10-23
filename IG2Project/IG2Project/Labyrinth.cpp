@@ -5,8 +5,7 @@
 #include <algorithm>
 
 #include "Wall.h"
-#include "Empty.h"
-#include "Hero.h"
+#include "Villain.h"
 
 
 void
@@ -20,6 +19,33 @@ Labyrinth::createLabyrinth(std::string stageFileName) {
 
 	vector<vector<Block*>> matrix = vector<vector<Block*>>(numRows, vector<Block*>(numCols, 0));
 
+	// --- Suelo del laberinto ---
+	float anchoX = Constant::BLOCK_SIZE * numCols - Constant::BLOCK_SIZE;   // eje X = columnas
+	float largoZ = Constant::BLOCK_SIZE * numRows - Constant::BLOCK_SIZE;   // eje Z = filas
+
+	Plane plano(Vector3::UNIT_Y, 0);                 // normal hacia arriba
+	MeshManager::getSingleton().createPlane(
+		"LabyrinthFloorMesh",
+		ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+		plano,
+		anchoX, largoZ,        // tamaño
+		1, 1,                  // segmentos
+		true, 1,               // normales, nº de juegos de UV
+		numCols / 4, numRows / 4,      // la textura se repite una vez por bloque
+		Vector3::UNIT_Z);      // dirección "arriba" de la textura
+
+	Entity* suelo = mSM->createEntity("LabyrinthFloorMesh");
+	suelo->setMaterialName("examples/Grass");
+	suelo->setCastShadows(false);
+
+	SceneNode* nSuelo = mSM->getRootSceneNode()->createChildSceneNode();
+	nSuelo->attachObject(suelo);
+
+	nSuelo->setPosition(numCols * Constant::BLOCK_SIZE / 2.0f,   // mitad de columnas (X)
+		-Constant::BLOCK_SIZE / 2.0f,            // altura (Y), sin cambios
+		numRows * Constant::BLOCK_SIZE / 2.0f);  // mitad de filas (Z)
+
+	// --- Construcción del laberinto ---
 	int iRow = 0, iCol = 0;
 	char cell; // siguiente celda, puede ser 'x' u 'o'
 	// Tenemos que hacer la clase abstracta "Block" que tendra de hijos "Solid", "Empty" y a futuro "Breakable"
@@ -39,17 +65,26 @@ Labyrinth::createLabyrinth(std::string stageFileName) {
 			else if (cell == Constant::WALL_BLOCK) { // Inserta un bloque lleno (muro)
 				SceneNode* wallNode = nLabyrinthWalls->createChildSceneNode();
 				Wall* wall = new Wall(iniPos, wallNode, mSM); // Internamente en la constructora se asigna la entidad al nodo
+				wall->setMaterialName("examples/Wall");
 				matrix[iRow][iCol] = wall;
 			}
 			else if (cell == Constant::HERO_BLOCK){
 				mHero = new Hero(iniPos, nHeroNode, mSM);
-				mHero->setScale(Vector3(10));
+				mHero->setScale(Vector3(Constant::BLOCK_SIZE / 10.0f));
 
 				SceneNode* floorNode = nLabyrinthFloors->createChildSceneNode();
 				Empty* empty = new Empty(iniPos, floorNode, mSM);
 				matrix[iRow][iCol] = empty;
 			}
-			else{ // Other type of block (por ahora vacio)
+			else if (cell == Constant::VILLAIN_BLOCK){
+				mVillain = new Villain(iniPos, nVillainNode, mSM);
+				mVillain->setScale(Vector3(Constant::BLOCK_SIZE / 250.0f));
+
+				SceneNode* floorNode = nLabyrinthFloors->createChildSceneNode();
+				Empty* empty = new Empty(iniPos, floorNode, mSM);
+				matrix[iRow][iCol] = empty;
+			}
+			else { // Other type of block (por ahora vacio)
 
 			}
 

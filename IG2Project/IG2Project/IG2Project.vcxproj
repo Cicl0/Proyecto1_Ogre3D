@@ -31,6 +31,7 @@
     <ClInclude Include="InvisibleBlock.h" />
     <ClInclude Include="Labyrinth.h" />
     <ClInclude Include="LabyrinthManager.h" />
+    <ClInclude Include="Villain.h" />
     <ClInclude Include="Wall.h" />
   </ItemGroup>
   <ItemGroup>
@@ -46,6 +47,7 @@
     <ClCompile Include="Labyrinth.cpp" />
     <ClCompile Include="LabyrinthManager.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Villain.cpp" />
     <ClCompile Include="Wall.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
