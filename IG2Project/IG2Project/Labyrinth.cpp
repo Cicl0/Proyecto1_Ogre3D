@@ -3,6 +3,7 @@
 #include <iostream>
 #include <cmath>
 #include <algorithm>
+#include <random>
 
 #include "Wall.h"
 #include "Villain.h"
@@ -116,6 +117,12 @@ Labyrinth::blockCenterReached(Ogre::Vector3 difference, Ogre::Vector3 dir) {
 	return difference.dotProduct(dir) >= 0.0f;
 }
 
+bool Labyrinth::canMoveTo(int row, int col) {
+	if (row < 0 || row >= numRows || col < 0 || col >= numCols) return false;
+	Block* b = mapa[row][col];
+	return b != nullptr && b->canPassThrough();
+}
+
 void 
 Labyrinth::stepForward(Character* character, float speed, Real time, Block* nextBlock) {
 	if (character->isStill())
@@ -214,4 +221,120 @@ Labyrinth::moveCharacter(Character* character, Real time) {
 			stepForward(character, character->getSpeed(), time, inFrontBlock);
 		}
 	}
+}
+
+// El movimiento del villano sigue la siguiente logica:
+// 1. Se calcula la celda actual y su centro
+// 2. Si ha llegado al centro del bloque y ha cambiado de celda, se calcula la nueva dirección:
+//   - Si el héroe está cerca, se calcula la dirección hacia él (priorizando el eje con mayor diferencia)
+//   - Si el héroe está lejos, se elige una dirección aleatoria que no sea un muro
+void Labyrinth::moveVillain(Villain* villain, Ogre::Real time) {
+	Vector3 pos = villain->getPosition();
+	Vector3 dir = villain->getGridOrientation();
+	float halfSize = Constant::BLOCK_SIZE / 2.0f;
+
+	// Calcula la celda actual en la matriz y su centro
+	int col = floor((pos.x + halfSize) / Constant::BLOCK_SIZE);
+	int row = floor((pos.z + halfSize) / Constant::BLOCK_SIZE);
+	col = max(0, min(col, numCols - 1));
+	row = max(0, min(row, numRows - 1));
+
+	Vector3 center(col * Constant::BLOCK_SIZE, pos.y, row * Constant::BLOCK_SIZE);
+
+	// Para evitar que calcule durante varios frames la misma celda, solo recalcula la dirección si ha llegado al centro del bloque y ha cambiado de celda
+	bool reachedCenter = blockCenterReached(pos - center, dir);
+	bool newCell = (row != villain->LastRow() || col != villain->LastCol());
+
+	if (reachedCenter && newCell) {
+		villain->LastRow() = row;
+		villain->LastCol() = col;
+
+		static std::mt19937 rng(std::random_device{}());
+
+		Vector3 heroPos = mHero->getPosition();
+		float difX = heroPos.x - center.x;
+		float difZ = heroPos.z - center.z;
+
+		float distance = sqrt(difX * difX + difZ * difZ);
+		bool chase = distance < Constant::BLOCK_SIZE * 7;
+
+		auto passable = [&](const Vector3& d) {
+			return canMoveTo(row + (int)d.z, col + (int)d.x);
+			};
+
+		Vector3 chosen = Vector3::ZERO;
+
+		// ---- PERSECUCIÓN ----
+
+		if (chase) {
+			// Entra en el área de persecución: se cancela la patrulla
+			villain->PatrolLeft() = 0;
+
+			Vector3 dirX(difX > 0 ? 1 : -1, 0, 0);
+			Vector3 dirZ(0, 0, difZ > 0 ? 1 : -1);
+
+			Vector3 primary, secondary;
+			if (fabs(difX) >= fabs(difZ)) { primary = dirX; secondary = dirZ; }
+			else { primary = dirZ; secondary = dirX; }
+
+			bool secondaryUseful = (primary == dirX) ? (fabs(difZ) > 0.01f)
+				: (fabs(difX) > 0.01f);
+
+			if (passable(primary)) {
+				chosen = primary;
+			}
+			else if (secondaryUseful && passable(secondary)) {
+				chosen = secondary;
+			}
+			else {
+				std::vector<Vector3> others = {
+					Vector3(1, 0, 0), Vector3(-1, 0, 0),
+					Vector3(0, 0, 1), Vector3(0, 0, -1)
+				};
+				others.erase(std::remove_if(others.begin(), others.end(),
+					[&](const Vector3& d) { return d == primary || (secondaryUseful && d == secondary); }),
+					others.end());
+
+				std::shuffle(others.begin(), others.end(), rng);
+				for (const Vector3& d : others) {
+					if (passable(d)) { chosen = d; break; }
+				}
+			}
+		}
+		// ---- PATRULLA ----
+		else {
+			// Sigue recto mientras queden bloques y no haya muro de frente
+			if (villain->PatrolLeft() > 0 && dir != Vector3::ZERO && passable(dir)) {
+				chosen = dir;
+				villain->PatrolLeft()--;
+			}
+			else {
+				// Patrulla terminada o muro delante: nueva dirección aleatoria
+				std::vector<Vector3> all = {
+					Vector3(1, 0, 0), Vector3(-1, 0, 0),
+					Vector3(0, 0, 1), Vector3(0, 0, -1)
+				};
+				std::shuffle(all.begin(), all.end(), rng);
+
+				for (const Vector3& d : all) {
+					if (d == -dir) continue;     // evita dar la vuelta si hay otra opción
+					if (passable(d)) { chosen = d; break; }
+				}
+
+				// Esta decisión ya cuenta como el primer bloque
+				villain->PatrolLeft() = Constant::PATROL_BLOCKS - 1;
+			}
+		}
+
+		// Si todo falla, marcha atrás y se reinicia la patrulla
+		if (chosen == Vector3::ZERO) {
+			chosen = -dir;
+			villain->PatrolLeft() = 0;
+		}
+
+		villain->setPosition(center);
+		villain->setNextDirection(chosen);
+	}
+
+	moveCharacter(villain, time);
 }

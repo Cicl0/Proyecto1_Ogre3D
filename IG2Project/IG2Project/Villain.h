@@ -18,6 +18,15 @@ public:
 
     SceneNode* crearHelice(Vector3 pos, Degree roll, Degree yaw, Degree pitch);
 
+	int& LastRow() { return lastRow; }
+
+	int& LastCol() { return lastCol; }
+
+	int& RangeVision() { return rangeVision; }
+
+	int& PatrolLeft() { return patrolLeft; }
+
+
 private:
     Ogre::SceneNode* mNodoVillano;
     Ogre::SceneNode* mHeliceIzq;
@@ -32,5 +41,12 @@ private:
     unsigned long mTiempoSentido = 3000;  // ms por sentido
     int mSentido = 1;            // +1 / -1
     float mVelHelices = 260.0f;   // grados por segundo
+
+    int lastRow = -1;
+    int lastCol = -1;
+
+	int rangeVision = 7; // rango de visión del villano (en bloques)
+
+    int patrolLeft = 0;   // bloques que le quedan a la patrulla actual
 };
 

@@ -27,6 +27,8 @@ public:
 
 	bool is180Turn();
 
+	void setNextDirection(Vector3 newDir) { nextDir = newDir; }
+
 protected:
 	Vector3 dir = Vector3::ZERO;
 	Vector3 nextDir = Vector3::ZERO;

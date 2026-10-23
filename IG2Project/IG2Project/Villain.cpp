@@ -50,6 +50,8 @@ SceneNode* Villain::crearHelice(Vector3 pos, Degree roll, Degree yaw, Degree pit
 
 void 
 Villain::frameRendered(const Ogre::FrameEvent& evt) {
+
+    // --- Animacion ---
     if (mTimer.getMilliseconds() >= mTiempoSentido) {
         mSentido = -mSentido;
         mTimer.reset();
@@ -66,4 +68,6 @@ Villain::frameRendered(const Ogre::FrameEvent& evt) {
     if (mAnguloCabeza < -mAnguloMax) mAnguloCabeza = -mAnguloMax;
 
     mCabeza->setOrientation(Quaternion(Degree(mAnguloCabeza), Vector3::UNIT_Y));
+
+    // --- Movimiento ---
 }

@@ -8,5 +8,6 @@ public:
 	static constexpr const char HERO_BLOCK = 'h';
 	static constexpr const char VILLAIN_BLOCK = 'v';
 	static constexpr int BLOCK_SIZE = 100;
+	static const int PATROL_BLOCKS = 3;
 };
 

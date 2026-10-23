@@ -44,9 +44,13 @@ public:
 
 	bool blockCenterReached(Ogre::Vector3 difference, Ogre::Vector3 dir);
 
+	bool canMoveTo(int row, int col);
+
 	void stepForward(Character* character, float speed, Real time, Block* nextBlock);
 
 	void moveCharacter(Character* character, Real time);
+
+	void moveVillain(Villain* villain, Ogre::Real time);
 
 private:
 	void createLabyrinth(std::string stageFilename);

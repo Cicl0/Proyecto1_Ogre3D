@@ -18,4 +18,7 @@ LabyrinthManager::frameRendered(const Ogre::FrameEvent& evt) {
 	if (laby->getHero()) {
 		laby->moveCharacter(laby->getHero(), evt.timeSinceLastFrame);
 	}
+	if (laby->getVillain()) {
+		laby->moveVillain(laby->getVillain(), evt.timeSinceLastFrame);
+	}
 }
