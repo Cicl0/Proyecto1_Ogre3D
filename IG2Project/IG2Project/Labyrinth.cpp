@@ -90,8 +90,24 @@ Labyrinth::createLabyrinth(std::string stageFileName) {
 				Empty* empty = new Empty(iniPos, floorNode, mSM);
 				matrix[iRow][iCol] = empty;
 			}
-			else { // Other type of block (por ahora vacio)
+			else if (cell == Constant::FAKE_BLOCK) { // Inserta un bloque lleno (muro)
+				SceneNode* fakeNode = nLabyrinthWalls->createChildSceneNode();
+				FakeBlock* fake = new FakeBlock(iniPos, fakeNode, mSM); // Internamente en la constructora se asigna la entidad al nodo
 
+				fake->setScale(Vector3(Constant::MESH_TO_BLOCK));
+
+				fake->setMaterialName(wallMaterial);
+				matrix[iRow][iCol] = fake;
+			}
+			else if (cell == Constant::INVISIBLE_BLOCK) { // Inserta un bloque lleno (muro)
+				SceneNode* inviNode = nLabyrinthWalls->createChildSceneNode();
+				InvisibleBlock* invisible = new InvisibleBlock(iniPos, inviNode, mSM); // Internamente en la constructora se asigna la entidad al nodo
+
+				invisible->setScale(Vector3(Constant::MESH_TO_BLOCK));
+				blocks.push_back(invisible);
+
+				invisible->setMaterialName(wallMaterial);
+				matrix[iRow][iCol] = invisible;
 			}
 
 			iCol++;

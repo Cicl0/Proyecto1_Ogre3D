@@ -26,6 +26,9 @@ LabyrinthManager::setup() {
 		mAppCtx->addInputListener(this);
 		mAppCtx->addInputListener(laby->getHero());
 		mAppCtx->addInputListener(laby->getVillain());
+		for (auto b : laby->getBlocksVector()) {
+			mAppCtx->addInputListener(b);
+		}
 	}
 }
 

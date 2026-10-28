@@ -9,7 +9,7 @@ public:
 	InvisibleBlock(Vector3 iniPos, SceneNode* wallNode, SceneManager* sceneManager, string mesh = "cube.mesh") :
 		Block(iniPos, wallNode, sceneManager, mesh)
 	{
-		collision = false;
+		collision = true;
 		breakable = false;
 		visibility = false;
 	}

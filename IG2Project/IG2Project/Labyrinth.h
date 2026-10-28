@@ -11,6 +11,8 @@
 #include "Block.h"
 #include "Wall.h"
 #include "Empty.h"
+#include "FakeBlock.h"
+#include "InvisibleBlock.h"
 
 class Labyrinth
 {
@@ -52,6 +54,7 @@ public:
 	int getNumRows() { return numRows; }
 	int getNumCols() { return numCols; }
 
+	vector<Block*> getBlocksVector() { return blocks; }
 private:
 
 	void createLabyrinth(std::string stageFilename);
@@ -92,5 +95,7 @@ private:
 	Ogre::SceneNode* nPoint = nullptr;
 
 	string lightType = "";
+
+	vector<Block*> blocks;
 };
 

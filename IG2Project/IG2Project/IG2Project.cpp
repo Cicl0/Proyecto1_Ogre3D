@@ -97,7 +97,7 @@ void IG2Project::setupScene(void) {
     mCamNode->setOrientation(Ogre::Quaternion(Ogre::Degree(-90), Ogre::Vector3::UNIT_X));
 
     mSM->setAmbientLight(ColourValue(0.0f, 0.0f, 0.0f));
-    mSM->setShadowTechnique(Ogre::ShadowTechnique::SHADOWTYPE_TEXTURE_ADDITIVE);
+    mSM->setShadowTechnique(Ogre::ShadowTechnique::SHADOWDETAILTYPE_STENCIL);
     mSM->setShadowTextureSettings(1024, 2);
 
     //------------------------------------------------------------------------
