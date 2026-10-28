@@ -4,6 +4,10 @@ material example/stonesFloor{
 	    texture_unit {
 		texture BeachStones.jpg
 	    }
+			rtshader_system
+			{
+				lighting_stage per_pixel
+			}
 	}
     }
 }
@@ -67,6 +71,10 @@ material examples/Grass
 	{
 		pass
 		{
+			lighting on
+			ambient 1 1 1
+            		diffuse 1 1 1
+
 			texture_unit
 			{
 				texture grass.png
@@ -81,6 +89,10 @@ material examples/Wall
 	{
 		pass
 		{
+			lighting on
+			ambient 1 1 1
+            		diffuse 1 1 1
+
 			texture_unit
 			{
 				texture egyptrockyfull.jpg

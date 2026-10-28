@@ -63,9 +63,14 @@ Villain::frameRendered(const Ogre::FrameEvent& evt) {
     mHeliceDer->roll(Degree(-giro));
 
     // Cabeza: barrido izquierda-derecha limitado
-    mAnguloCabeza += mSentido * mVelCabeza * evt.timeSinceLastFrame;
-    if (mAnguloCabeza > mAnguloMax)  mAnguloCabeza = mAnguloMax;
-    if (mAnguloCabeza < -mAnguloMax) mAnguloCabeza = -mAnguloMax;
+    if (!chasing) {
+        mAnguloCabeza += mSentido * mVelCabeza * evt.timeSinceLastFrame;
+        if (mAnguloCabeza > mAnguloMax)  mAnguloCabeza = mAnguloMax;
+        if (mAnguloCabeza < -mAnguloMax) mAnguloCabeza = -mAnguloMax;
+    }
+    else {
+        mAnguloCabeza = 0.0f;
+    }
 
     mCabeza->setOrientation(Quaternion(Degree(mAnguloCabeza), Vector3::UNIT_Y));
 

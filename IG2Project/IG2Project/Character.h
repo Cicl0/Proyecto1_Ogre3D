@@ -29,10 +29,12 @@ public:
 
 	void setNextDirection(Vector3 newDir) { nextDir = newDir; }
 
+	void restartPosition() { this->setPosition(initialPosition); }
+
 protected:
 	Vector3 dir = Vector3::ZERO;
 	Vector3 nextDir = Vector3::ZERO;
 
-	float speed = 100;
+	float speed = 50;
 };
 

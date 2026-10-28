@@ -15,8 +15,10 @@ Labyrinth::createLabyrinth(std::string stageFileName) {
 	stageFile.open(stageFileName);
 
 	// Read the number of files and columns
-	stageFile >> numRows;
-	stageFile >> numCols;
+	stageFile >> numRows >> numCols;
+
+	string wallMaterial, floorMaterial;
+	stageFile >> wallMaterial >> floorMaterial >> lightType;
 
 	vector<vector<Block*>> matrix = vector<vector<Block*>>(numRows, vector<Block*>(numCols, 0));
 
@@ -24,27 +26,24 @@ Labyrinth::createLabyrinth(std::string stageFileName) {
 	float anchoX = Constant::BLOCK_SIZE * numCols - Constant::BLOCK_SIZE;   // eje X = columnas
 	float largoZ = Constant::BLOCK_SIZE * numRows - Constant::BLOCK_SIZE;   // eje Z = filas
 
-	Plane plano(Vector3::UNIT_Y, 0);                 // normal hacia arriba
 	MeshManager::getSingleton().createPlane(
-		"LabyrinthFloorMesh",
-		ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-		plano,
-		anchoX, largoZ,        // tamaño
-		1, 1,                  // segmentos
-		true, 1,               // normales, nº de juegos de UV
-		numCols / 4, numRows / 4,      // la textura se repite una vez por bloque
-		Vector3::UNIT_Z);      // dirección "arriba" de la textura
+		"FloorTileMesh", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+		Plane(Vector3::UNIT_Y, 0),
+		Constant::BLOCK_SIZE, Constant::BLOCK_SIZE,
+		20, 20,              // segmentos por bloque
+		true, 1, 1, 1, Vector3::UNIT_Z);
 
-	Entity* suelo = mSM->createEntity("LabyrinthFloorMesh");
-	suelo->setMaterialName(floorMaterial);
-	suelo->setCastShadows(false);
-
-	SceneNode* nSuelo = mSM->getRootSceneNode()->createChildSceneNode();
-	nSuelo->attachObject(suelo);
-
-	nSuelo->setPosition(numCols * Constant::BLOCK_SIZE / 2.0f,   // mitad de columnas (X)
-		-Constant::BLOCK_SIZE / 2.0f,            // altura (Y), sin cambios
-		numRows * Constant::BLOCK_SIZE / 2.0f);  // mitad de filas (Z)
+	for (int r = 0; r < numRows; ++r) {
+		for (int c = 0; c < numCols; ++c) {
+			Entity* e = mSM->createEntity("FloorTileMesh");
+			e->setMaterialName(floorMaterial);
+			e->setCastShadows(true);
+			SceneNode* n = mSM->getRootSceneNode()->createChildSceneNode(
+				Vector3(c * Constant::BLOCK_SIZE, -Constant::BLOCK_SIZE / 2.0f,
+					r * Constant::BLOCK_SIZE));
+			n->attachObject(e);
+		}
+	}
 
 	// --- Construcción del laberinto ---
 	int iRow = 0, iCol = 0;
@@ -66,14 +65,16 @@ Labyrinth::createLabyrinth(std::string stageFileName) {
 			else if (cell == Constant::WALL_BLOCK) { // Inserta un bloque lleno (muro)
 				SceneNode* wallNode = nLabyrinthWalls->createChildSceneNode();
 				Wall* wall = new Wall(iniPos, wallNode, mSM); // Internamente en la constructora se asigna la entidad al nodo
+
+				wall->setScale(Vector3(Constant::MESH_TO_BLOCK));
+
 				wall->setMaterialName(wallMaterial);
 				matrix[iRow][iCol] = wall;
 			}
 			else if (cell == Constant::HERO_BLOCK){
 				mHero = new Hero(iniPos, nHeroNode, mSM);
-				mHero->setScale(Vector3(Constant::BLOCK_SIZE / 10.0f));
-
-				mHero->InitialPosition() = iniPos;
+				nHeroNode->setScale(Vector3(Constant::BLOCK_SIZE / 10.0f));
+				mHero->setInitialPosition(iniPos);
 
 				SceneNode* floorNode = nLabyrinthFloors->createChildSceneNode();
 				Empty* empty = new Empty(iniPos, floorNode, mSM);
@@ -82,6 +83,8 @@ Labyrinth::createLabyrinth(std::string stageFileName) {
 			else if (cell == Constant::VILLAIN_BLOCK){
 				mVillain = new Villain(iniPos, nVillainNode, mSM);
 				mVillain->setScale(Vector3(Constant::BLOCK_SIZE / 250.0f));
+
+				mVillain->setInitialPosition(iniPos);
 
 				SceneNode* floorNode = nLabyrinthFloors->createChildSceneNode();
 				Empty* empty = new Empty(iniPos, floorNode, mSM);
@@ -99,6 +102,9 @@ Labyrinth::createLabyrinth(std::string stageFileName) {
 	stageFile.close();
 
 	mapa = move(matrix);
+
+	// Crea las luces
+	createLights();
 }
 
 Block*&
@@ -266,12 +272,10 @@ void Labyrinth::moveVillain(Villain* villain, Ogre::Real time) {
 
 		Vector3 chosen = Vector3::ZERO;
 
+		mVillain->setChasing(chase);
+
 		// ---- PERSECUCIÓN ----
-
 		if (chase) {
-			// Entra en el área de persecución: se cancela la patrulla
-			villain->PatrolLeft() = 0;
-
 			Vector3 dirX(difX > 0 ? 1 : -1, 0, 0);
 			Vector3 dirZ(0, 0, difZ > 0 ? 1 : -1);
 
@@ -279,8 +283,7 @@ void Labyrinth::moveVillain(Villain* villain, Ogre::Real time) {
 			if (fabs(difX) >= fabs(difZ)) { primary = dirX; secondary = dirZ; }
 			else { primary = dirZ; secondary = dirX; }
 
-			bool secondaryUseful = (primary == dirX) ? (fabs(difZ) > 0.01f)
-				: (fabs(difX) > 0.01f);
+			bool secondaryUseful = (primary == dirX) ? (fabs(difZ) > 0.01f) : (fabs(difX) > 0.01f);
 
 			if (passable(primary)) {
 				chosen = primary;
@@ -305,33 +308,29 @@ void Labyrinth::moveVillain(Villain* villain, Ogre::Real time) {
 		}
 		// ---- PATRULLA ----
 		else {
-			// Sigue recto mientras queden bloques y no haya muro de frente
-			if (villain->PatrolLeft() > 0 && dir != Vector3::ZERO && passable(dir)) {
-				chosen = dir;
-				villain->PatrolLeft()--;
-			}
-			else {
-				// Patrulla terminada o muro delante: nueva dirección aleatoria
-				std::vector<Vector3> all = {
-					Vector3(1, 0, 0), Vector3(-1, 0, 0),
-					Vector3(0, 0, 1), Vector3(0, 0, -1)
-				};
-				std::shuffle(all.begin(), all.end(), rng);
+			std::vector<Vector3> options;
+			const Vector3 all[4] = {
+				Vector3(1, 0, 0), Vector3(-1, 0, 0),
+				Vector3(0, 0, 1), Vector3(0, 0, -1)
+			};
 
-				for (const Vector3& d : all) {
-					if (d == -dir) continue;     // evita dar la vuelta si hay otra opción
-					if (passable(d)) { chosen = d; break; }
-				}
-
-				// Esta decisión ya cuenta como el primer bloque
-				villain->PatrolLeft() = Constant::PATROL_BLOCKS - 1;
+			// Direcciones transitables que no sean volver por donde ha venido
+			for (const Vector3& d : all) {
+				if (dir != Vector3::ZERO && d == -dir) continue;
+				if (passable(d)) options.push_back(d);
 			}
+
+			if (!options.empty()) {
+				std::uniform_int_distribution<int> pick(0, (int)options.size() - 1);
+				chosen = options[pick(rng)];
+			}
+			// Si options está vacía (callejón sin salida), chosen sigue en ZERO
+			// y el fallback de abajo lo hace volver atrás.
 		}
 
 		// Si todo falla, marcha atrás y se reinicia la patrulla
 		if (chosen == Vector3::ZERO) {
 			chosen = -dir;
-			villain->PatrolLeft() = 0;
 		}
 
 		villain->setPosition(center);
@@ -339,4 +338,80 @@ void Labyrinth::moveVillain(Villain* villain, Ogre::Real time) {
 	}
 
 	moveCharacter(villain, time);
+}
+
+bool Labyrinth::heroTouchesVillain() {
+	if (!mHero || !mVillain) return false;
+	return mHero->getAABB().intersects(mVillain->getAABB());
+}
+
+bool Labyrinth::checkHeroCollision() {
+	if (!heroTouchesVillain())
+		return true;
+
+	mHero->lives()--; // pierde una vida
+
+	if (mHero->lives() > 0) { 
+		mHero->restartPosition(); // reinicia las posiciones del heroe y del villano
+		mVillain->restartPosition();
+
+		return true;
+	}
+
+	return false; // fin del juego
+}
+
+void Labyrinth::createLights() {
+	const float B = Constant::BLOCK_SIZE;
+
+	if (lightType == "directional") {
+		// --- DIRECTIONAL ---
+		mDirLight = mSM->createLight("DirLight");
+		mDirLight->setType(Light::LT_DIRECTIONAL);
+		mPointLight->setDiffuseColour(1.0f, 1.0f, 1.0f);
+		mPointLight->setSpecularColour(1.0f, 1.0f, 1.0f);
+		mDirLight->setCastShadows(true);
+
+		SceneNode* nDir = mSM->getRootSceneNode()->createChildSceneNode();
+		nDir->attachObject(mDirLight);
+		nDir->setDirection(Vector3(-1, -1, -0.5f));
+	}
+	else if (lightType == "spotlight") {
+		// --- SPOTLIGHT ---
+		mSpotLight = mSM->createLight("SpotLight");
+		mSpotLight->setType(Light::LT_SPOTLIGHT);
+		mSpotLight->setDiffuseColour(1.0f, 1.0f, 1.0f);
+		mSpotLight->setSpecularColour(1.0f, 1.0f, 1.0f);
+		mSpotLight->setSpotlightFalloff(1.0f);
+		mSpotLight->setSpotlightRange(Degree(B * 6), Degree(B * 7));   // cono interior y exterior
+		mSpotLight->setAttenuation(B * 20, 1.0f, 0.0f, 0.0f);    // alcance suficiente
+		mSpotLight->setCastShadows(true);
+
+		nSpot = mSM->getRootSceneNode()->createChildSceneNode();
+		nSpot->attachObject(mSpotLight);
+		nSpot->setDirection(Vector3(0, -1, 0));
+	}
+	else if (lightType == "point") {
+		// --- POINT ---
+		mPointLight = mSM->createLight("PointLight");
+		mPointLight->setType(Light::LT_POINT);
+		mPointLight->setDiffuseColour(1.0f, 1.0f, 1.0f);
+		mPointLight->setSpecularColour(1.0f, 1.0f, 1.0f);
+		mPointLight->setAttenuation(B * 6, 1.0f, 0.0f, 0.0f);
+		mPointLight->setCastShadows(true);
+
+		nPoint = mSM->getRootSceneNode()->createChildSceneNode();
+		nPoint->attachObject(mPointLight);
+	}
+
+	updateLights();
+}
+
+void Labyrinth::updateLights() {
+	if (!mHero) return;
+	Vector3 h = mHero->getPosition();
+	const float B = Constant::BLOCK_SIZE;
+
+	if(lightType == "spotlight") nSpot->setPosition(h.x, B * 6, h.z);    // misma x y z que el héroe, por encima
+	else if (lightType == "point") nPoint->setPosition(h.x, B * 0.75f, h.z + B); // sobre su cabeza
 }

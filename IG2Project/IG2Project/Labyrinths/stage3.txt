@@ -1,5 +1,8 @@
 18
 26
+examples/Wall
+examples/Grass
+spotlight
 xxxxxxxxxxxxxxxxxxxxxxxxxx
 xhooooxxxxxoooooxxxxooooox
 xoxxxoooooooxxxooooooxxxox

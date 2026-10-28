@@ -76,8 +76,15 @@ void IG2Project::setupScene(void) {
     mCamNode = mSM->getRootSceneNode()->createChildSceneNode("nCam");
     mCamNode->attachObject(cam);
 
-    mCamNode->setPosition(0, 0, 1000);
-    mCamNode->lookAt(Ogre::Vector3(0, 0, 0), Ogre::Node::TS_WORLD);
+    Labyrinth* laby = mLM->getLabyrinth();
+    const float B = Constant::BLOCK_SIZE;
+
+    // Los bloques están en (B*col, 0, B*row), así que el centro es la mitad de (n-1)
+    float cx = (laby->getNumCols() - 1) * B / 2.0f;
+    float cz = (laby->getNumRows() - 1) * B / 2.0f;
+
+    mCamNode->setPosition(cx, -B * 40, cz);                // 6 bloques de alto
+    mCamNode->lookAt(Ogre::Vector3(cx, 0, cz), Ogre::Node::TS_WORLD);
 
     // and tell it to render into the main window
     Viewport* vp = getRenderWindow()->addViewport(cam);
@@ -86,18 +93,24 @@ void IG2Project::setupScene(void) {
     addInputListener(mCamMgr);
     mCamMgr->setStyle(OgreBites::CS_ORBIT);
 
+    mCamMgr->setPivotOffset(Vector3(cx, -B * 10, cz));
+    mCamNode->setOrientation(Ogre::Quaternion(Ogre::Degree(-90), Ogre::Vector3::UNIT_X));
+
+    mSM->setAmbientLight(ColourValue(0.0f, 0.0f, 0.0f));
+    mSM->setShadowTechnique(Ogre::ShadowTechnique::SHADOWTYPE_TEXTURE_ADDITIVE);
+    mSM->setShadowTextureSettings(1024, 2);
 
     //------------------------------------------------------------------------
     // Creating the light
 
-    mSM->setAmbientLight(ColourValue(0.5, 0.5, 0.5));
-    
-    Light* luz = mSM->createLight("Luz");
-    luz->setType(Ogre::Light::LT_DIRECTIONAL);
-    luz->setDiffuseColour(0.75, 0.75, 0.75);
+    //mSM->setAmbientLight(ColourValue(0.5, 0.5, 0.5));
+    //
+    //Light* luz = mSM->createLight("Luz");
+    //luz->setType(Ogre::Light::LT_DIRECTIONAL);
+    //luz->setDiffuseColour(0.75, 0.75, 0.75);
 
-    mLightNode = mSM->getRootSceneNode()->createChildSceneNode("nLuz");
-    mLightNode->attachObject(luz);
-    mLightNode->setDirection(Ogre::Vector3(-1, -1, -1));
+    //mLightNode = mSM->getRootSceneNode()->createChildSceneNode("nLuz");
+    //mLightNode->attachObject(luz);
+    //mLightNode->setDirection(Ogre::Vector3(-1, -1, -1));
 }
 

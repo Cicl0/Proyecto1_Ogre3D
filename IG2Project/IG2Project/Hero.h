@@ -10,21 +10,17 @@ class Hero : public Character
 public:
 	Hero(Vector3 iniPos, SceneNode* heroNode, SceneManager* sceneManager) :
 		Character(iniPos, heroNode, sceneManager, "Sinbad.mesh")
-	{ }
+	{
+		
+	}
 
 	virtual bool keyPressed(const OgreBites::KeyboardEvent& evt);
 
-	Vector3& InitialPosition() {
-		return iniPos;
-	}
-
-	int& Lives() {
-		return lives;
+	int& lives() {
+		return liv;
 	}
 
 private:
-	Vector3 iniPos;
-
-	int lives = 3;
+	int liv = 3;
 };
 

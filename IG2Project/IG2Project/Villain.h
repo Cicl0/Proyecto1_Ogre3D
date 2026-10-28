@@ -24,7 +24,9 @@ public:
 
 	int& RangeVision() { return rangeVision; }
 
-	int& PatrolLeft() { return patrolLeft; }
+    bool isChasing() { return chasing; }
+
+    void setChasing(bool isChas) { chasing = isChas; }
 
 
 private:
@@ -47,6 +49,6 @@ private:
 
 	int rangeVision = 7; // rango de visión del villano (en bloques)
 
-    int patrolLeft = 0;   // bloques que le quedan a la patrulla actual
+    bool chasing = false;
 };
 

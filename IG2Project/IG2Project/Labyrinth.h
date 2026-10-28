@@ -37,25 +37,33 @@ public:
 	}
 
 	Hero* getHero() { return mHero; }
-
 	Villain* getVillain() { return mVillain; }
-
 	Block*& getBlock(Ogre::Vector3 pos);
 
 	int& Points() { return points; }
 
 	void moveCharacter(Character* character, Real time);
-
 	void moveVillain(Villain* villain, Ogre::Real time);
 
+	bool checkHeroCollision();
+
+	void updateLights();
+
+	int getNumRows() { return numRows; }
+	int getNumCols() { return numCols; }
+
 private:
+
 	void createLabyrinth(std::string stageFilename);
 
+
 	bool blockCenterReached(Ogre::Vector3 difference, Ogre::Vector3 dir);
-
 	bool canMoveTo(int row, int col);
-
 	void stepForward(Character* character, float speed, Real time, Block* nextBlock);
+
+	bool heroTouchesVillain();
+
+	void createLights();
 
 	Ogre::SceneManager* mSM;
 
@@ -76,5 +84,13 @@ private:
 	string floorMaterial = "examples/Grass";
 
 	int points = 0;
+
+	Ogre::Light* mDirLight = nullptr;
+	Ogre::Light* mSpotLight = nullptr;
+	Ogre::Light* mPointLight = nullptr;
+	Ogre::SceneNode* nSpot = nullptr;
+	Ogre::SceneNode* nPoint = nullptr;
+
+	string lightType = "";
 };
 

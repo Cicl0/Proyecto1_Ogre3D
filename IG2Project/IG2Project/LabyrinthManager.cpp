@@ -31,18 +31,25 @@ LabyrinthManager::setup() {
 
 void 
 LabyrinthManager::frameRendered(const Ogre::FrameEvent& evt) {
+	if (!laby) return;
+
 	if (laby->getHero()) {
 		laby->moveCharacter(laby->getHero(), evt.timeSinceLastFrame);
 	}
 	if (laby->getVillain()) {
 		laby->moveVillain(laby->getVillain(), evt.timeSinceLastFrame);
 	}
+	if (laby->checkHeroCollision() && laby->getHero() && laby->getHero()->lives() <= 0) {
+		// fin de juego: mostrar mensaje, parar el movimiento, etc.
+	}
+
+	laby->updateLights();
 	updateInfo();
 }
 
 void LabyrinthManager::updateInfo() {
 	std::stringstream ss;
-	ss << "Vidas: " << mHero->Lives() << "\n"
+	ss << "Vidas: " << mHero->lives() << "\n"
 		<< "Puntos: " << laby->Points() << "\n";
 	infoText->setText(ss.str());
 	ss.str("");
