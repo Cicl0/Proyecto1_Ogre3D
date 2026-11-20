@@ -180,7 +180,6 @@ Labyrinth::stepForward(Character* character, float speed, Real time, Block* next
 
 	// Si el camino está libre o aún no ha llegado al centro, avanza libremente
 	character->move(dir * speed * time);
-	cout << "Char posx: " << character->getPosition().x << ", posz: " << character->getPosition().z << endl;
 }
 
 void

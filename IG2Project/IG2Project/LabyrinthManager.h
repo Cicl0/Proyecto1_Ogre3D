@@ -9,6 +9,8 @@
 #include "Hero.h"
 #include "Villain.h"
 
+#include "StartAnimation.h"
+
 class Labyrinth;
 class Hero;
 
@@ -21,10 +23,15 @@ public:
 		mTrayMgr(trayMgr),
 		laby(nullptr)
 	{
-		setup();
+		mAppCtx->addInputListener(this);
 	}
 
-	void setup();
+	void setup();                 
+
+	void setupStartAnimation(); // crea la intro
+
+	// Callback que se ejecuta justo después de crear el laberinto
+	void setOnGameStart(std::function<void()> cb) { mOnGameStart = std::move(cb); }
 
 	Labyrinth* getLabyrinth() const { return laby; }
 
@@ -36,6 +43,9 @@ private:
 	Ogre::SceneManager* mSM;
 	OgreBites::TrayManager* mTrayMgr = nullptr;
 	OgreBites::ApplicationContext* mAppCtx;
+
+	StartAnimation* startAnim = nullptr;
+	std::function<void()> mOnGameStart;
 
 	std::vector<std::string> stages;
 	int currentStage;

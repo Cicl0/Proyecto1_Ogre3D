@@ -34,6 +34,8 @@ protected:
     virtual void shutdown();
     virtual void setupScene();
 
+    void setupGameCamera();
+
 
     Ogre::SceneNode* mSinbadNode = nullptr;
 

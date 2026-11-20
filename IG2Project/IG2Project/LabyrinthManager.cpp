@@ -23,7 +23,6 @@ LabyrinthManager::setup() {
 	mHero = laby->getHero();
 
 	if (mAppCtx && laby && laby->getHero() && laby->getVillain()) {
-		mAppCtx->addInputListener(this);
 		mAppCtx->addInputListener(laby->getHero());
 		mAppCtx->addInputListener(laby->getVillain());
 		for (auto b : laby->getBlocksVector()) {
@@ -32,8 +31,27 @@ LabyrinthManager::setup() {
 	}
 }
 
+void
+LabyrinthManager::setupStartAnimation() {
+	startAnim = new StartAnimation(mSM, mAppCtx);
+}
+
 void 
 LabyrinthManager::frameRendered(const Ogre::FrameEvent& evt) {
+	if (startAnim) {
+
+		if (startAnim->startRequested()) {
+			// Se hace aquí y no en keyPressed: no se puede modificar la lista de
+			// listeners mientras ApplicationContext la recorre para despachar la tecla.
+			delete startAnim;          // el destructor libera toda la intro
+			startAnim = nullptr;
+
+			setup();                   // crea el laberinto
+			if (mOnGameStart) mOnGameStart();   // IG2Project coloca la cámara del juego
+		}
+		return;
+	}
+
 	if (!laby) return;
 
 	if (laby->getHero()) {

@@ -57,9 +57,12 @@ void IG2Project::setup(void) {
     // Laberinto
     mLM = new LabyrinthManager(mSM, this, mTrayMgr);
 
+    mLM->setOnGameStart([this]() { setupGameCamera(); });
+
     // Adds the listener for this object
     addInputListener(this);
     setupScene();
+	mLM->setupStartAnimation();
 }
 
 void IG2Project::setupScene(void) {
@@ -76,6 +79,24 @@ void IG2Project::setupScene(void) {
     mCamNode = mSM->getRootSceneNode()->createChildSceneNode("nCam");
     mCamNode->attachObject(cam);
 
+    // and tell it to render into the main window
+    Viewport* vp = getRenderWindow()->addViewport(cam);
+
+    // Perspectiva de la INTRO: cámara fija, de frente al suelo de 150x300.
+    // Sinbad se mueve en X entre -50 y 50, y mira a +Z cuando baila (hacia la cámara).
+    // Ajusta estos valores hasta que se parezca al vídeo.
+    mCamNode->setPosition(0, 5, 30);
+    mCamNode->lookAt(Ogre::Vector3(0, 5, 0), Ogre::Node::TS_WORLD);
+
+    // Sombras: se configuran una vez, valen para la intro y para el juego
+    mSM->setShadowTechnique(Ogre::ShadowTechnique::SHADOWDETAILTYPE_STENCIL);
+    mSM->setShadowTextureSettings(1024, 2);
+
+}
+
+void 
+IG2Project::setupGameCamera() {
+
     Labyrinth* laby = mLM->getLabyrinth();
     const float B = Constant::BLOCK_SIZE;
 
@@ -83,12 +104,10 @@ void IG2Project::setupScene(void) {
     float cx = (laby->getNumCols() - 1) * B / 2.0f;
     float cz = (laby->getNumRows() - 1) * B / 2.0f;
 
-    mCamNode->setPosition(cx, -B * 40, cz);                // 6 bloques de alto
+    mCamNode->setPosition(cx, -B * 40, cz);
     mCamNode->lookAt(Ogre::Vector3(cx, 0, cz), Ogre::Node::TS_WORLD);
 
-    // and tell it to render into the main window
-    Viewport* vp = getRenderWindow()->addViewport(cam);
-
+    // Ahora sí: control de cámara orbital (en la intro no queremos que se mueva)
     mCamMgr = new OgreBites::CameraMan(mCamNode);
     addInputListener(mCamMgr);
     mCamMgr->setStyle(OgreBites::CS_ORBIT);
@@ -96,21 +115,6 @@ void IG2Project::setupScene(void) {
     mCamMgr->setPivotOffset(Vector3(cx, -B * 10, cz));
     mCamNode->setOrientation(Ogre::Quaternion(Ogre::Degree(-90), Ogre::Vector3::UNIT_X));
 
+    // La intro dejó luz ambiente 0.4: el laberinto va a oscuras (solo sus luces)
     mSM->setAmbientLight(ColourValue(0.0f, 0.0f, 0.0f));
-    mSM->setShadowTechnique(Ogre::ShadowTechnique::SHADOWDETAILTYPE_STENCIL);
-    mSM->setShadowTextureSettings(1024, 2);
-
-    //------------------------------------------------------------------------
-    // Creating the light
-
-    //mSM->setAmbientLight(ColourValue(0.5, 0.5, 0.5));
-    //
-    //Light* luz = mSM->createLight("Luz");
-    //luz->setType(Ogre::Light::LT_DIRECTIONAL);
-    //luz->setDiffuseColour(0.75, 0.75, 0.75);
-
-    //mLightNode = mSM->getRootSceneNode()->createChildSceneNode("nLuz");
-    //mLightNode->attachObject(luz);
-    //mLightNode->setDirection(Ogre::Vector3(-1, -1, -1));
 }
-
