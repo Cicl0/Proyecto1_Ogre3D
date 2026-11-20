@@ -175,6 +175,8 @@ Labyrinth::stepForward(Character* character, float speed, Real time, Block* next
 	if (!nextBlock->canPassThrough() && blockCenterReached(difference, dir)) {
 		// Se coloca exactamente en el centro del bloque actual y no se mueve más
 		character->setPosition(blockCenter);
+		character->setNextDirection(Vector3::ZERO);
+		character->setDirection(Vector3::ZERO);
 		return;
 	}
 

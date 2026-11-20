@@ -35,3 +35,26 @@ Hero::keyPressed(const OgreBites::KeyboardEvent& evt) {
 
     return true;
 }
+
+void Hero::initAnimations() {
+    mRunBase = entity->getAnimationState("RunBase");
+    mRunTop = entity->getAnimationState("RunTop");
+    mIdleBase = entity->getAnimationState("IdleBase");
+    mIdleTop = entity->getAnimationState("IdleTop");
+    for (auto* s : { mRunBase, mRunTop, mIdleBase, mIdleTop }) s->setLoop(true);
+
+    // Al empezar la partida (dir == ZERO) está parado
+    mIdleBase->setEnabled(true);  mIdleTop->setEnabled(true);
+    mRunBase->setEnabled(false);  mRunTop->setEnabled(false);
+}
+
+void Hero::frameRendered(const Ogre::FrameEvent& evt) {
+    if (!isStill() != mRunning) {   // solo se conmutan las animaciones cuando cambia el estado
+        mRunning = !isStill();
+        mRunBase->setEnabled(mRunning);   mRunTop->setEnabled(mRunning);
+        mIdleBase->setEnabled(!mRunning); mIdleTop->setEnabled(!mRunning);
+    }
+
+    if (mRunning) { mRunBase->addTime(evt.timeSinceLastFrame);  mRunTop->addTime(evt.timeSinceLastFrame); }
+    else { mIdleBase->addTime(evt.timeSinceLastFrame); mIdleTop->addTime(evt.timeSinceLastFrame); }
+}

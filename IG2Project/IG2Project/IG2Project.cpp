@@ -49,9 +49,9 @@ void IG2Project::setup(void) {
     mShaderGenerator->addSceneManager(mSM);
         
     mSM->addRenderQueueListener(mOverlaySystem);
-    //mTrayMgr = new OgreBites::TrayManager("TrayGUISystem", mWindow.render);
+
     mTrayMgr = new OgreBites::TrayManager("TrayGUISystem", getRenderWindow());
-    mTrayMgr->showFrameStats(OgreBites::TL_BOTTOMLEFT);
+    
     addInputListener(mTrayMgr);
 
     // Laberinto
@@ -117,4 +117,6 @@ IG2Project::setupGameCamera() {
 
     // La intro dejó luz ambiente 0.4: el laberinto va a oscuras (solo sus luces)
     mSM->setAmbientLight(ColourValue(0.0f, 0.0f, 0.0f));
+
+    mTrayMgr->showFrameStats(OgreBites::TL_BOTTOMLEFT);
 }

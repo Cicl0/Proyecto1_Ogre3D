@@ -27,6 +27,8 @@ public:
 
 	bool is180Turn();
 
+	void setDirection(Vector3 newDir) { dir = newDir; }
+
 	void setNextDirection(Vector3 newDir) { nextDir = newDir; }
 
 	void restartPosition() { this->setPosition(initialPosition); }
