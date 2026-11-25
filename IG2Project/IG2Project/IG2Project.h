@@ -37,6 +37,8 @@ protected:
     void setupGameCamera();
 
 
+    Ogre::SceneNode* mSinbadNode = nullptr;
+
     Ogre::SceneManager* mSM = nullptr;
     OgreBites::TrayManager* mTrayMgr = nullptr;
 
@@ -47,6 +49,7 @@ protected:
     Ogre::SceneNode* mCamNode = nullptr;
     OgreBites::CameraMan* mCamMgr = nullptr;
 
+    Labyrinth* labyrinth = nullptr;
     LabyrinthManager* mLM = nullptr;
 };
 
