@@ -26,6 +26,16 @@ public:
 		mAppCtx->addInputListener(this);
 	}
 
+	~LabyrinthManager() {
+		delete laby; laby = nullptr;
+		delete startAnim; startAnim = nullptr;
+
+		delete infoText; infoText = nullptr;
+		delete infoLabel; infoLabel = nullptr;
+
+		delete mHero; mHero = nullptr;
+	}
+
 	void setup();                 
 
 	void setupStartAnimation(); // crea la intro
@@ -41,7 +51,7 @@ public:
 
 private:
 	Ogre::SceneManager* mSM;
-	OgreBites::TrayManager* mTrayMgr = nullptr;
+	OgreBites::TrayManager* mTrayMgr;
 	OgreBites::ApplicationContext* mAppCtx;
 
 	StartAnimation* startAnim = nullptr;

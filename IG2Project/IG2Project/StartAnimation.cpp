@@ -148,25 +148,5 @@ void StartAnimation::frameRendered(const Ogre::FrameEvent& evt) {
 }
 
 StartAnimation::~StartAnimation() {
-	mAppCtx->removeInputListener(this);
 
-	mSM->destroyAnimationState("introAnim");
-	mSM->destroyAnimation("introAnim");
-
-	// 1) Desadjuntar todo de sus nodos / huesos y destruir los objetos
-	mSinbad->detachAllObjectsFromBone();
-	mSM->destroyEntity(mSwordL);
-	mSM->destroyEntity(mSwordR);
-	mLightNode->detachObject(mLight);
-	mSM->destroyLight(mLight);
-	mRoot->detachAllObjects();
-	mSinbadNode->detachAllObjects();
-	mSM->destroyEntity(mSinbad);
-	mSM->destroyEntity(mFloor);
-
-	// 2) Ahora sí, destruir los nodos (hijos incluidos: suelo, Sinbad, luz)
-	mRoot->removeAndDestroyAllChildren();
-	mSM->destroySceneNode(mRoot);
-
-	Ogre::MeshManager::getSingleton().remove("introPlane");
 }

@@ -15,7 +15,6 @@ bool IG2Project::keyPressed(const OgreBites::KeyboardEvent& evt) {
     }
 
     else if (evt.keysym.sym == SDLK_k) {
-        cout << "Position of Sinbad: " << mSinbadNode->getPosition() << endl;
         cout << "Position of the camera: " << mCamNode->getPosition() << endl;
     }
 
@@ -32,6 +31,7 @@ void IG2Project::shutdown() {
 
     delete mTrayMgr;  mTrayMgr = nullptr;
     delete mCamMgr; mCamMgr = nullptr;
+    delete mLM; mLM = nullptr;
 
     // do not forget to call the base 
     OgreBites::ApplicationContext::shutdown();
