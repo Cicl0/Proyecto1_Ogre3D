@@ -1,7 +1,7 @@
 #include "Villain.h"
 
-Villain::Villain(Vector3 iniPos, SceneNode* heroNode, SceneManager* sceneManager) :
-	Character(iniPos, heroNode, sceneManager, "sphere.mesh")
+Villain::Villain(Vector3 iniPos, SceneNode* villainNode, SceneManager* sceneManager) :
+	Character(iniPos, villainNode, sceneManager, "sphere.mesh")
 {
     entity->setMaterialName("examples/Rockwall"); // Aplica un material al cuerpo
 
@@ -9,7 +9,10 @@ Villain::Villain(Vector3 iniPos, SceneNode* heroNode, SceneManager* sceneManager
     mCabeza = mNode->createChildSceneNode();
     mCabeza->setPosition(0, 150, 0);
     mCabeza->setScale(2.5f, 2.5f, 2.5f);
-    mCabeza->attachObject(mSM->createEntity("ogrehead.mesh"));
+    Entity* head = mSM->createEntity("ogrehead.mesh");
+    head->setCastShadows(false);
+    mCabeza->attachObject(head);
+    entity->setCastShadows(false);
 
     // Helices (moviles)
     mHeliceIzq = crearHelice(Vector3(-100.0f, 0.0f, 0.0f), Degree(0), Degree(90), Degree(0));
@@ -32,6 +35,7 @@ SceneNode* Villain::crearHelice(Vector3 pos, Degree roll, Degree yaw, Degree pit
     SceneNode* ejeNode = helice->createChildSceneNode();
     ejeNode->setScale(0.15f, 0.15f, 0.15f);
     ejeNode->attachObject(eje);
+    eje->setCastShadows(false);
 
     // 3 aspas (cube)
     for (int i = 0; i < 3; ++i) {
@@ -44,7 +48,9 @@ SceneNode* Villain::crearHelice(Vector3 pos, Degree roll, Degree yaw, Degree pit
         aspaNode->setPosition(0, 55, 0);
         aspaNode->setScale(0.3f, 1.2f, 0.1f);
         aspaNode->attachObject(aspa);
+        aspa->setCastShadows(false);
     }
+
     return helice;
 }
 

@@ -12,6 +12,7 @@ public:
 		collision = true;
 		visibility = true;
 		breakable = true;
+		canPlaceBomb = false;
 	}
 
 	void frameRendered(const Ogre::FrameEvent& evt) override {}

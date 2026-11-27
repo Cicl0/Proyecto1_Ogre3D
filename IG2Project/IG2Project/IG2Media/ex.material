@@ -101,4 +101,22 @@ material examples/Wall
 	}
 }
 
+material examples/BombBlack
+{
+	technique
+	{
+		pass
+		{
+			lighting on
+			ambient 0 0 0
+			diffuse 0 0 0 1
+			specular 0 0 0 1 1
+			emissive 0 0 0
 
+			rtshader_system
+			{
+				lighting_stage per_pixel
+			}
+		}
+	}
+}

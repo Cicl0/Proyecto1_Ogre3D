@@ -15,7 +15,6 @@ bool IG2Project::keyPressed(const OgreBites::KeyboardEvent& evt) {
     }
 
     else if (evt.keysym.sym == SDLK_k) {
-        cout << "Position of Sinbad: " << mSinbadNode->getPosition() << endl;
         cout << "Position of the camera: " << mCamNode->getPosition() << endl;
     }
 
@@ -24,6 +23,7 @@ bool IG2Project::keyPressed(const OgreBites::KeyboardEvent& evt) {
 
 
 void IG2Project::shutdown() {
+    delete mLM; mLM = nullptr;
 
     mShaderGenerator->removeSceneManager(mSM);
     mSM->removeRenderQueueListener(mOverlaySystem);
@@ -62,7 +62,9 @@ void IG2Project::setup(void) {
     // Adds the listener for this object
     addInputListener(this);
     setupScene();
-	mLM->setupStartAnimation();
+	//mLM->setupStartAnimation();
+    mLM->setup();
+    setupGameCamera();
 }
 
 void IG2Project::setupScene(void) {
@@ -89,9 +91,8 @@ void IG2Project::setupScene(void) {
     mCamNode->lookAt(Ogre::Vector3(0, 5, 0), Ogre::Node::TS_WORLD);
 
     // Sombras: se configuran una vez, valen para la intro y para el juego
-    mSM->setShadowTechnique(Ogre::ShadowTechnique::SHADOWDETAILTYPE_STENCIL);
-    mSM->setShadowTextureSettings(1024, 2);
-
+    mSM->setShadowTechnique(Ogre::ShadowTechnique::SHADOWDETAILTYPE_TEXTURE);
+    mSM->setShadowFarDistance(Constant::BLOCK_SIZE * 35);
 }
 
 void 
@@ -104,7 +105,7 @@ IG2Project::setupGameCamera() {
     float cx = (laby->getNumCols() - 1) * B / 2.0f;
     float cz = (laby->getNumRows() - 1) * B / 2.0f;
 
-    mCamNode->setPosition(cx, -B * 40, cz);
+    mCamNode->setPosition(cx, -B * 20, cz);
     mCamNode->lookAt(Ogre::Vector3(cx, 0, cz), Ogre::Node::TS_WORLD);
 
     // Ahora sí: control de cámara orbital (en la intro no queremos que se mueva)

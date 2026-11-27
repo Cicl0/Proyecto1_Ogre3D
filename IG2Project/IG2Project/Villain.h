@@ -30,7 +30,6 @@ public:
 
 
 private:
-    Ogre::SceneNode* mNodoVillano;
     Ogre::SceneNode* mHeliceIzq;
     Ogre::SceneNode* mHeliceDer;
 

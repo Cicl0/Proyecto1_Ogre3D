@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Block.h" />
+    <ClInclude Include="Bomb.h" />
     <ClInclude Include="BreakableBlock.h" />
     <ClInclude Include="Character.h" />
     <ClInclude Include="Constant.h" />
@@ -37,6 +38,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Block.cpp" />
+    <ClCompile Include="Bomb.cpp" />
     <ClCompile Include="BreakableBlock.cpp" />
     <ClCompile Include="Character.cpp" />
     <ClCompile Include="Empty.cpp" />

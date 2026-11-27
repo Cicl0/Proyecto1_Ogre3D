@@ -13,8 +13,12 @@
 #include "Empty.h"
 #include "FakeBlock.h"
 #include "InvisibleBlock.h"
+#include "BreakableBlock.h"
+#include "Bomb.h"
 
-class Labyrinth
+#include <OgreInput.h>
+
+class Labyrinth : public OgreBites::InputListener
 {
 public:
 
@@ -27,7 +31,21 @@ public:
 		nLabyrinthFloors = mSM->getRootSceneNode()->createChildSceneNode("nLabyrinthFloors");
 		nHeroNode = mSM->getRootSceneNode()->createChildSceneNode("nHero");
 		nVillainNode = mSM->getRootSceneNode()->createChildSceneNode("nVillain");
+		nBombs = mSM->getRootSceneNode()->createChildSceneNode("nBombs");
 		createLabyrinth(fileName);
+	}
+
+	~Labyrinth() {
+		for (auto& fila : mapa) {
+			for (Block*& b : fila) {
+				delete b;       // delete sobre nullptr es seguro
+				b = nullptr;
+			}
+		}
+		mapa.clear();
+
+		if (mHero) delete mHero; mHero = nullptr;
+		if (mVillain) delete mVillain; mVillain = nullptr;
 	}
 
 	void showBoundingBoxWalls() {
@@ -40,7 +58,8 @@ public:
 
 	Hero* getHero() { return mHero; }
 	Villain* getVillain() { return mVillain; }
-	Block*& getBlock(Ogre::Vector3 pos);
+	Block*& getBlock(Ogre::Vector3 pos); // Busqueda por posicion absoluta
+	Block* blockAt(int row, int col); // Busqueda por fila y columna
 
 	int& Points() { return points; }
 
@@ -54,7 +73,20 @@ public:
 	int getNumRows() { return numRows; }
 	int getNumCols() { return numCols; }
 
-	vector<Block*> getBlocksVector() { return blocks; }
+	vector<Block*>& getBlocksVector() { return blocks; }
+
+
+	// --- Bombs ---
+	vector<Bomb*>& getBombs() { return bombs; }
+
+	void setMaxBombs(int max) { maxBombs = max; }
+	int getMaxBombs() { return maxBombs; }
+
+	int getBombsSpawned() { return bombs.size(); }
+
+	void explodeBomb(Bomb* bomb);
+
+
 private:
 
 	void createLabyrinth(std::string stageFilename);
@@ -74,6 +106,7 @@ private:
 	Ogre::SceneNode* nLabyrinthFloors;
 	Ogre::SceneNode* nHeroNode;
 	Ogre::SceneNode* nVillainNode;
+	Ogre::SceneNode* nBombs;
 
 	Hero* mHero;
 	Villain* mVillain;
@@ -97,5 +130,8 @@ private:
 	string lightType = "";
 
 	vector<Block*> blocks;
+
+	vector<Bomb*> bombs;
+	int maxBombs = 10;
 };
 

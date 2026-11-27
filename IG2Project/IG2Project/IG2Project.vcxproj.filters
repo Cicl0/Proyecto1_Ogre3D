@@ -63,6 +63,12 @@
     <ClInclude Include="Villain.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
+    <ClInclude Include="StartAnimation.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Bomb.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IG2Object.cpp">
@@ -105,6 +111,12 @@
       <Filter>Archivos de origen\Blocks</Filter>
     </ClCompile>
     <ClCompile Include="Villain.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="StartAnimation.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="Bomb.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
   </ItemGroup>

@@ -9,6 +9,7 @@ public:
 	static constexpr const char VILLAIN_BLOCK = 'v';
 	static constexpr const char FAKE_BLOCK = 'f';
 	static constexpr const char INVISIBLE_BLOCK = 'i';
+	static constexpr const char BREAKABLE_BLOCK = 'b';
 	static constexpr int BLOCK_SIZE = 10;
 
 	// Tamaño original de las mallas base (cube.mesh y el cubo subdividido miden 100)

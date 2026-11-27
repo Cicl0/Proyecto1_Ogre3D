@@ -23,11 +23,26 @@ public:
 
 	bool isBreakable() const { return breakable; }
 
-	void breakBlock() { if (breakable) collision = false; visibility = false; }
+	void breakBlock() { 
+		if (breakable) { 
+			collision = false; 
+			visibility = false; 
+			entity->setVisible(false);
+			canPlaceBomb = true;
+		} 
+	}
+
+	bool canSetBomb() { return canPlaceBomb; }
+
+	void setBomb(bool b) { bomb = b; }
+
+	bool hasBomb() { return bomb; }
 
 protected:
 	bool collision;
 	bool visibility;
 	bool breakable;
+	bool canPlaceBomb;
+	bool bomb = false;
 };
 

@@ -8,7 +8,6 @@
 #include "Wall.h"
 #include "Villain.h"
 
-
 void
 Labyrinth::createLabyrinth(std::string stageFileName) {
 	std::ifstream stageFile;
@@ -22,28 +21,25 @@ Labyrinth::createLabyrinth(std::string stageFileName) {
 
 	vector<vector<Block*>> matrix = vector<vector<Block*>>(numRows, vector<Block*>(numCols, 0));
 
+	auto B = Constant::BLOCK_SIZE;
 	// --- Suelo del laberinto ---
-	float anchoX = Constant::BLOCK_SIZE * numCols - Constant::BLOCK_SIZE;   // eje X = columnas
-	float largoZ = Constant::BLOCK_SIZE * numRows - Constant::BLOCK_SIZE;   // eje Z = filas
+	float anchoX = B * numCols - B;   // eje X = columnas
+	float largoZ = B * numRows - B;   // eje Z = filas
 
 	MeshManager::getSingleton().createPlane(
 		"FloorTileMesh", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
 		Plane(Vector3::UNIT_Y, 0),
-		Constant::BLOCK_SIZE, Constant::BLOCK_SIZE,
-		20, 20,              // segmentos por bloque
-		true, 1, 1, 1, Vector3::UNIT_Z);
+		Constant::BLOCK_SIZE * numCols, B * numRows,
+		1, 1, true, 1,
+		numCols, numRows,              // la textura se repite una vez por bloque
+		Vector3::UNIT_Z);
 
-	for (int r = 0; r < numRows; ++r) {
-		for (int c = 0; c < numCols; ++c) {
-			Entity* e = mSM->createEntity("FloorTileMesh");
-			e->setMaterialName(floorMaterial);
-			e->setCastShadows(true);
-			SceneNode* n = mSM->getRootSceneNode()->createChildSceneNode(
-				Vector3(c * Constant::BLOCK_SIZE, -Constant::BLOCK_SIZE / 2.0f,
-					r * Constant::BLOCK_SIZE));
-			n->attachObject(e);
-		}
-	}
+	Entity* floor = mSM->createEntity("FloorTileMesh");
+	floor->setMaterialName(floorMaterial);
+	floor->setCastShadows(false);      // el suelo solo recibe sombra
+	SceneNode* fn = mSM->getRootSceneNode()->createChildSceneNode(
+		Vector3((numCols - 1) * B / 2, -B / 2, (numRows - 1) * B / 2));
+	fn->attachObject(floor);
 
 	// --- Construcción del laberinto ---
 	int iRow = 0, iCol = 0;
@@ -109,6 +105,16 @@ Labyrinth::createLabyrinth(std::string stageFileName) {
 				invisible->setMaterialName(wallMaterial);
 				matrix[iRow][iCol] = invisible;
 			}
+			else if (cell == Constant::BREAKABLE_BLOCK) {
+				SceneNode* breakNode = nLabyrinthWalls->createChildSceneNode();
+				BreakableBlock* breakable = new BreakableBlock(iniPos, breakNode, mSM);
+
+				breakable->setScale(Vector3(Constant::MESH_TO_BLOCK));
+				blocks.push_back(breakable);
+
+				breakable->setMaterialName(wallMaterial);
+				matrix[iRow][iCol] = breakable;
+			}
 
 			iCol++;
 		}
@@ -133,6 +139,11 @@ Labyrinth::getBlock(Ogre::Vector3 pos) {
 	int col = floor((pos.x + halfSize) / Constant::BLOCK_SIZE);
 	int row = floor((pos.z + halfSize) / Constant::BLOCK_SIZE);
 
+	return mapa[row][col];
+}
+
+Block* Labyrinth::blockAt(int row, int col) {
+	if (row < 0 || row >= numRows || col < 0 || col >= numCols) return nullptr;
 	return mapa[row][col];
 }
 
@@ -336,6 +347,7 @@ void Labyrinth::moveVillain(Villain* villain, Ogre::Real time) {
 				if (dir != Vector3::ZERO && d == -dir) continue;
 				if (passable(d)) options.push_back(d);
 			}
+			std::cout << options.size() << endl;
 
 			if (!options.empty()) {
 				std::uniform_int_distribution<int> pick(0, (int)options.size() - 1);
@@ -385,9 +397,8 @@ void Labyrinth::createLights() {
 		// --- DIRECTIONAL ---
 		mDirLight = mSM->createLight("DirLight");
 		mDirLight->setType(Light::LT_DIRECTIONAL);
-		mPointLight->setDiffuseColour(1.0f, 1.0f, 1.0f);
-		mPointLight->setSpecularColour(1.0f, 1.0f, 1.0f);
-		mDirLight->setCastShadows(true);
+		mDirLight->setDiffuseColour(1.0f, 1.0f, 1.0f);
+		mDirLight->setSpecularColour(1.0f, 1.0f, 1.0f);
 
 		SceneNode* nDir = mSM->getRootSceneNode()->createChildSceneNode();
 		nDir->attachObject(mDirLight);
@@ -402,7 +413,6 @@ void Labyrinth::createLights() {
 		mSpotLight->setSpotlightFalloff(1.0f);
 		mSpotLight->setSpotlightRange(Degree(B * 6), Degree(B * 7));   // cono interior y exterior
 		mSpotLight->setAttenuation(B * 20, 1.0f, 0.0f, 0.0f);    // alcance suficiente
-		mSpotLight->setCastShadows(true);
 
 		nSpot = mSM->getRootSceneNode()->createChildSceneNode();
 		nSpot->attachObject(mSpotLight);
@@ -415,7 +425,6 @@ void Labyrinth::createLights() {
 		mPointLight->setDiffuseColour(1.0f, 1.0f, 1.0f);
 		mPointLight->setSpecularColour(1.0f, 1.0f, 1.0f);
 		mPointLight->setAttenuation(B * 6, 1.0f, 0.0f, 0.0f);
-		mPointLight->setCastShadows(true);
 
 		nPoint = mSM->getRootSceneNode()->createChildSceneNode();
 		nPoint->attachObject(mPointLight);
@@ -431,4 +440,38 @@ void Labyrinth::updateLights() {
 
 	if(lightType == "spotlight") nSpot->setPosition(h.x, B * 6, h.z);    // misma x y z que el héroe, por encima
 	else if (lightType == "point") nPoint->setPosition(h.x, B * 0.75f, h.z + B); // sobre su cabeza
+}
+
+void
+Labyrinth::explodeBomb(Bomb* bomb) {
+	const float B = Constant::BLOCK_SIZE;
+	Vector3 bPos = bomb->getPosition();
+	int col = (int)floor((bPos.x + B / 2) / B);
+	int row = (int)floor((bPos.z + B / 2) / B);
+
+	if (Block* centre = blockAt(row, col)) centre->breakBlock();
+
+	bool right = true, left = true, up = true, down = true;
+
+	// Procesa una dirección: devuelve false si la llama debe parar ahí
+	auto spread = [&](int r, int c) -> bool {
+		Block* b = blockAt(r, c);
+		if (!b) return false;                 // fuera del mapa
+
+		if (b->isBreakable()) {               // destruible: se rompe y la llama sigue
+			b->breakBlock();                  // no hace nada si ya estaba roto
+			return true;
+		}
+
+		return b->canPassThrough();           // vacío: sigue; sólido indestructible: para
+	};
+
+	for (int i = 1; i <= bomb->getRange(); ++i) {
+		if (right) right = spread(row, col + i);
+		if (left)  left = spread(row, col - i);
+		if (up)    up = spread(row + i, col);
+		if (down)  down = spread(row - i, col);
+
+		if (!right && !left && !up && !down) break; // nada más que propagar
+	}
 }

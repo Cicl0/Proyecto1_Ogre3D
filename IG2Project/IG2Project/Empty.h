@@ -11,7 +11,9 @@ public:
 		collision = false;
 		breakable = false;
 		visibility = true;
+		canPlaceBomb = true;
 	}
 
 private:
+	bool bomb = false;
 };

@@ -2,16 +2,16 @@
 26
 examples/Wall
 examples/Grass
-spotlight
+directional
 xxxxxxxxxxxxxxxxxxxxxxxxxx
-xhooifxxxxxoooooxxxxooooox
+xoooifxxxxxoooooxxxxooooox
 xoxxxoooooooxxxooooooxxxox
 xoooooxoxoxoxxxoxxoxooooox
 xoxxxoxoxoxooooooooxoxxxox
 xoxxxoxoxoxoxxxxxoxxoxxoox
 xoooooooooooooooooooooooxx
 xoxxxxoxxoxxxxxxxoxxxoxoxx
-xoooooooooooooooooooooooox
+xoooooobboohooooooooooooox
 xoxoxoxxoxoxxxxxxoxoxoxxxx
 xoooooxxoxooooooooxoxoxxxx
 xoxxxoxxoxxoxxoxxoooooooox
@@ -19,5 +19,5 @@ xoooooooooooooooooxxxoxxox
 xoxoxxxoxxxxxxxxxoooooooox
 xoooooooooooooooooxxxoxxxx
 xoxxoxxoxxxxxxxxxoooooooox
-xoooooooooooooooooxxxvxxxx
+xoooooooooooooooooxxxoxxxx
 xxxxxxxxxxxxxxxxxxxxxxxxxx

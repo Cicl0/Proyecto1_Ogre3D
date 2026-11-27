@@ -28,4 +28,6 @@ Character::is180Turn() {
 		return true;
 	else if (dir == Vector3::NEGATIVE_UNIT_Z && nextDir == Vector3::UNIT_Z)
 		return true;
+
+	return false;
 }

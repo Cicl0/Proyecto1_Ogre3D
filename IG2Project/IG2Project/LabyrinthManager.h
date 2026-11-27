@@ -26,6 +26,13 @@ public:
 		mAppCtx->addInputListener(this);
 	}
 
+	~LabyrinthManager() {
+		if (startAnim) delete startAnim;
+		startAnim = nullptr;
+		if (laby) delete laby;
+		laby = nullptr;
+	}
+
 	void setup();                 
 
 	void setupStartAnimation(); // crea la intro
@@ -36,6 +43,7 @@ public:
 	Labyrinth* getLabyrinth() const { return laby; }
 
 	void frameRendered(const Ogre::FrameEvent& evt);
+	virtual bool keyPressed(const OgreBites::KeyboardEvent& evt);
 
 	void updateInfo();
 
@@ -55,5 +63,7 @@ private:
 	OgreBites::Label* infoLabel;
 
 	Hero* mHero;
+
+	void spawnBomb();
 };
 
