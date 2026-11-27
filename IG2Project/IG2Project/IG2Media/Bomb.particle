@@ -1,0 +1,64 @@
+// Humo de la mecha, animado con la hoja Smoke15Frames.png (3 filas x 5 columnas).
+// Pensado para una bomba de radio 4 (Bomb.cpp lo reescala).
+// Sin "duration": el emisor es indefinido y se reinicia con clear()/setEmitting().
+particle_system Bomb/Fuse
+{
+	quota                    100
+	material                 Bomb/FuseSmoke
+	particle_width           3
+	particle_height          3
+	cull_each                false
+	renderer                 billboard
+	billboard_type           point
+	billboard_rotation_type  vertex
+	sorted                   true
+
+	// stacks (filas) x slices (columnas). Se numera por filas: 0 = arriba a la izquierda
+	texture_sheet_size       3 5
+
+	emitter Point
+	{
+		angle                20
+		direction            0 1 0
+		emission_rate        25
+		velocity_min         3
+		velocity_max         6
+		time_to_live_min     0.8
+		time_to_live_max     1.4
+	}
+
+	// Cada particula recorre los 15 fotogramas durante su vida (duration 0 = su time_to_live)
+	affector TextureAnimator
+	{
+		texcoord_start   0
+		texcoord_count   15
+		duration         0
+		random_offset    false
+	}
+
+	// El color (amarillo -> marron, con alfa) sale de smokecolors.png. No hace falta ColourFader.
+	affector ColourImage
+	{
+		image smokecolors.png
+	}
+
+	affector Rotator
+	{
+		rotation_speed_range_start  -60
+		rotation_speed_range_end     60
+		rotation_range_start          0
+		rotation_range_end          360
+	}
+
+	affector Scaler
+	{
+		rate 2
+	}
+
+	affector DirectionRandomiser
+	{
+		randomness     2
+		scope          0.5
+		keep_velocity  true
+	}
+}

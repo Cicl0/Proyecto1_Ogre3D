@@ -3,45 +3,120 @@
 #include <OgreMaterialManager.h>
 #include <OgreLogManager.h>
 
-void
-Bomb::frameRendered(const Ogre::FrameEvent& evt) {
-	if (duration <= 0) {
-		exploded = true;
-		return;
-	}
+#include <algorithm>
 
-	duration -= evt.timeSinceLastFrame;
+void Bomb::createMesh()
+{
+	radius = Constant::BLOCK_SIZE * 0.4f;
+
+	// ---- Esfera (sphere.mesh tiene radio 100). Solo este nodo crece. ----
+	sphere = mSM->createEntity("sphere.mesh");
+	sphere->setMaterialName("examples/BombBlack");
+	sphere->setCastShadows(false);
+
+	sphereBase = radius / 100.0f;
+	sphereNode = mNode->createChildSceneNode();
+	sphereNode->setScale(sphereBase, sphereBase, sphereBase);
+	sphereNode->attachObject(sphere);
+
+	// ---- Mecha (column.mesh): escala constante, hermana de la esfera ----
+	fuse = mSM->createEntity("column.mesh");
+	fuse->setCastShadows(false);
+
+	const AxisAlignedBox& box = fuse->getBoundingBox();
+	fuseLength = radius * 0.6f;
+	const float fuseScale = fuseLength / box.getSize().y;
+	const float thin = 0.5f;   // mecha mas fina que alta
+
+	fuseNode = mNode->createChildSceneNode();
+	fuseNode->setScale(fuseScale * thin, fuseScale, fuseScale * thin);
+	fuseNode->attachObject(fuse);
+
+	// Base de la mecha pegada a la cima de la esfera (con un pequeno solape)
+	const Vector3 c = box.getCenter();
+	fuseBaseY = radius - box.getMinimum().y * fuseScale - radius * 0.05f;
+	fuseOffset = fuseBaseY - radius;
+	fuseNode->setPosition(-c.x * fuseScale * thin, fuseBaseY, -c.z * fuseScale * thin);
+
+	// ---- Humo: plantilla "Bomb/Fuse" (Bomb.particle). Nombre unico por bomba. ----
+	static int bombId = 0;
+	mFuseFx = mSM->createParticleSystem("BombFuse" + std::to_string(bombId++), "Bomb/Fuse");
+	mFuseFx->setCastShadows(false);
+
+	// El script esta pensado para radius = 4. Escalamos tamano y velocidad al radio real.
+	const float k = radius / 4.0f;
+	mFuseFx->setDefaultDimensions(3.0f * k, 3.0f * k);
+	if (ParticleEmitter* em = mFuseFx->getEmitter(0))
+		em->setParticleVelocity(3.0f * k, 6.0f * k);   // hacia arriba (direction 0 1 0)
+
+	mSmokeNode = mNode->createChildSceneNode();
+	mSmokeNode->attachObject(mFuseFx);
+
+	arm();
 }
 
-void
-Bomb::createMesh() {
+// Reinicia la bomba
+void Bomb::arm()
+{
+	elapsed = 0.0f;
+	exploded = false;
 
-	Entity* sphere = mSM->createEntity("sphere.mesh");
-	Entity* fuse = mSM->createEntity("column.mesh");
+	sphereNode->setScale(sphereBase * minScale, sphereBase * minScale, sphereBase * minScale);
 
-	const Real radius = 1.0;
-	const Real sphereScale = radius / 100.0;
+	const float baseY = fuseFollowsSphere ? radius * minScale + fuseOffset : fuseBaseY;
+	mSmokeNode->setPosition(0, baseY + fuseLength, 0);
 
-	SceneNode* sphereNode = mNode->createChildSceneNode();
-	sphereNode->attachObject(sphere);
-	sphereNode->setScale(sphereScale, sphereScale, sphereScale);
+	mFuseFx->clear();              // quita las particulas vivas
+	mFuseFx->setEmitting(true);
+}
 
-	const Real fuseHeight = radius * 0.6;   // altura deseada de la mecha
+void Bomb::frameRendered(const FrameEvent& evt)
+{
+	if (exploded) return;
 
-	// Medimos la columna para escalarla a la altura deseada
-	const AxisAlignedBox& box = fuse->getBoundingBox();
-	const Real fuseScale = fuseHeight / box.getSize().y;
+	// Limita el delta: un breakpoint haria explotar la bomba de golpe
+	elapsed += std::min(evt.timeSinceLastFrame, 0.05f);
+	const float t = std::min(elapsed / fuseTime, 1.0f);   // 0 -> 1
 
-	SceneNode* fuseNode = mNode->createChildSceneNode();
-	fuseNode->attachObject(fuse);
-	fuseNode->setScale(fuseScale, fuseScale, fuseScale);
+	// ---- Tamano de la esfera: oscila entre minScale y maxScale ----
+	const float osc = 0.5f - 0.5f * std::cos(elapsed * growSpeed * Math::TWO_PI);   // 0..1
+	const float factor = minScale + (maxScale - minScale) * osc;
+	const float s = sphereBase * factor;
+	sphereNode->setScale(s, s, s);          // la mecha NO cambia de tamano
 
-	// Colocamos la base de la columna justo en la cima de la esfera.
-	const Vector3 center = box.getCenter();
-	fuseNode->setPosition(-center.x * fuseScale,
-		radius - box.getMinimum().y * fuseScale - 0.05,
-		-center.z * fuseScale);
+	// ---- Mecha: misma escala siempre; solo sigue la cima de la esfera ----
+	const float baseY = radius * factor + fuseOffset;
+	Vector3 fp = fuseNode->getPosition();
+	fp.y = baseY;
+	fuseNode->setPosition(fp);
 
-	sphere->setMaterialName("examples/BombBlack");
-	fuse->setMaterialName("examples/EnvMappedRustySteel");
+	// ---- Emisor de humo: baja de la punta al final de la mecha (o al centro) ----
+	// Llega justo cuando acaba fuseTime: velocidad = distancia / fuseTime.
+	// Las particulas ya emitidas quedan en el mundo y suben solas.
+	const float tipY = baseY + fuseLength;
+	const float endY =  0.0f;
+	mSmokeNode->setPosition(0, tipY + (endY - tipY) * t, 0);
+
+	if (t >= 1.0f) {
+		exploded = true;
+		mFuseFx->setEmitting(false);
+	}
+}
+
+// ADAPTA: si la clase base ya destruye mNode o entidades, quita esa parte de aqui.
+Bomb::~Bomb()
+{
+	try {
+		if (mFuseFx) { mSM->destroyParticleSystem(mFuseFx); mFuseFx = nullptr; }
+		if (sphere) { mSM->destroyEntity(sphere);          sphere = nullptr; }
+		if (fuse) { mSM->destroyEntity(fuse);            fuse = nullptr; }
+		if (mNode) {
+			mNode->removeAndDestroyAllChildren();
+			mSM->destroySceneNode(mNode);
+			mNode = nullptr;
+		}
+	}
+	catch (const Ogre::Exception& e) {
+		LogManager::getSingleton().logMessage("~Bomb: " + e.getFullDescription());
+	}
 }

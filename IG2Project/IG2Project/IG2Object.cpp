@@ -68,6 +68,10 @@ void IG2Object::setScale(Vector3 vScale) {
     mNode->setScale(vScale);
 }
 
+Vector3 IG2Object::getScale() {
+    return mNode->getScale();
+}
+
 void IG2Object::setVisible(bool visible) {
     mNode->setVisible(visible);
 }

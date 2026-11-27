@@ -106,6 +106,11 @@ public:
     void setScale(Vector3 vScale);
 
     /**
+     * Gets the scale of this element.
+     */
+    Vector3 getScale();
+
+    /**
      * Sets if the entity of this object is visible or not.
      * @param visible If true, the element is visible. The element is not visible otherwise.
      */
